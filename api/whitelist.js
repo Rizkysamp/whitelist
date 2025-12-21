@@ -4,9 +4,9 @@ export default async function handler(req, res) {
     const { name } = req.body;
     if (!name) return res.status(400).json({ success: false, error: 'Nama tidak boleh kosong' });
 
-    const panelUrl = "https://control.optiklink.com";
-    const serverId = "e225d81e";
-    const apiKey = "8rWJmHyex7De4WXP"; // PASTIKAN COPY ULANG DARI PANEL
+    const panelUrl = "https://cx.galaxyhost.biz.id";
+    const serverId = "e2f5a458";
+    const apiKey = "ptlc_5J2dxXOlwNxmiQIofjqSCuDNfyctfESju4YyxwhGcoO"; // PASTIKAN COPY ULANG DARI PANEL
 
     // Bersihkan URL panel (hapus / di akhir jika ada)
     const cleanUrl = panelUrl.replace(/\/$/, "");
