@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     // Konfigurasi Pterodactyl kamu
     const panelUrl = "https://control.optiklink.com";
     const serverId = "e225d81e";
-    const apiKey = "PASTE_API_KEY_KAMU_DISINI"; // Masukkan API Key asli kamu
+    const apiKey = "8rWJmHyex7De4WXP"; // Masukkan API Key asli kamu
 
     try {
         const response = await fetch(`${panelUrl}/api/client/servers/${serverId}/files/write?file=/scriptfiles/whitelist/${name}.txt`, {
