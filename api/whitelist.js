@@ -22,7 +22,7 @@ export default async function handler(req, res) {
                 'Content-Type': 'text/plain', // Ubah ke text/plain agar panel menerima body kosong
                 'Accept': 'application/vnd.pterodactyl.v1+json'
             },
-            body: "Whitelisted by Web" // Isi sedikit teks agar file tidak benar-benar 0 byte
+            body: "Whitelisted by WeblimzXd" // Isi sedikit teks agar file tidak benar-benar 0 byte
         });
 
         // Jika status 204 atau 200, berarti berhasil
