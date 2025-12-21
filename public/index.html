@@ -48,12 +48,27 @@
     </div>
 
     <script>
+        // FUNGSI CEK SAAT WEB DIBUKA: Jika sudah pernah daftar, kunci tombolnya.
+        window.onload = function() {
+            const registeredName = localStorage.getItem('myWhitelist');
+            if (registeredName) {
+                showStatus("Anda sudah terdaftar dengan nama: " + registeredName, "bg-yellow-500/20 text-yellow-400");
+                disableButton();
+            }
+        };
+
         async function submitWhitelist() {
             const nameInput = document.getElementById('playerName');
             const name = nameInput.value.trim();
             const btn = document.getElementById('btnSubmit');
             const btnText = document.getElementById('btnText');
             const statusBox = document.getElementById('statusBox');
+
+            // Proteksi tambahan: Cek lagi di penyimpanan HP
+            if (localStorage.getItem('myWhitelist')) {
+                alert("Satu perangkat hanya diperbolehkan mendaftarkan 1 nama!");
+                return;
+            }
 
             if(!name) {
                 showStatus("Masukkan nama player terlebih dahulu!", "bg-red-500/20 text-red-400");
@@ -66,7 +81,6 @@
             statusBox.classList.add('hidden');
 
             try {
-                // MEMANGGIL API VERCEL (BUKAN LANGSUNG KE PANEL)
                 const response = await fetch('/api/whitelist', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -76,24 +90,37 @@
                 const result = await response.json();
 
                 if(result.success) {
+                    // SIMPAN DATA KE HP USER
+                    localStorage.setItem('myWhitelist', name);
+                    
                     showStatus("Berhasil! " + name + " telah terdaftar.", "bg-green-500/20 text-green-400");
-                    nameInput.value = ""; // Reset input
+                    nameInput.value = ""; 
+                    disableButton(); // Kunci tombol secara permanen
                 } else {
                     showStatus("Gagal: " + (result.error || "Terjadi kesalahan"), "bg-red-500/20 text-red-400");
+                    btn.disabled = false;
+                    btnText.innerText = "Daftarkan Whitelist";
                 }
             } catch (err) {
                 showStatus("Terjadi kesalahan jaringan/server.", "bg-red-500/20 text-red-400");
-            } finally {
-                // Stop Loading
                 btn.disabled = false;
                 btnText.innerText = "Daftarkan Whitelist";
             }
+        }
+
+        function disableButton() {
+            const btn = document.getElementById('btnSubmit');
+            const btnText = document.getElementById('btnText');
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            btnText.innerText = "Sudah Terdaftar";
         }
 
         function showStatus(msg, classes) {
             const statusBox = document.getElementById('statusBox');
             statusBox.innerText = msg;
             statusBox.className = "mt-4 p-3 rounded-lg text-sm text-center " + classes;
+            statusBox.classList.remove('hidden');
         }
     </script>
 </body>
