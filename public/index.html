@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Whitelist | Millanium Roleplay</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-900 text-white font-sans flex items-center justify-center min-h-screen p-4">
+
+    <div class="max-w-md w-full p-8 bg-slate-800 rounded-2xl shadow-2xl border border-slate-700">
+        <div class="text-center mb-8">
+            <div class="bg-cyan-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-cyan-500/50">
+                <i class="fas fa-user-check text-2xl text-white"></i>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight">Whitelist Panel</h1>
+            <p class="text-slate-400 text-sm mt-2">Millanium Roleplay Management</p>
+        </div>
+
+        <div class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-2">Nama Player (UCP/IC)</label>
+                <input type="text" id="playerName" 
+                    class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition-all placeholder-slate-600 text-white"
+                    placeholder="Contoh: Budi_Santoso">
+            </div>
+
+            <button onclick="submitWhitelist()" id="btnSubmit"
+                class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition-all transform active:scale-95 shadow-lg shadow-cyan-600/30 flex items-center justify-center">
+                <span id="btnText">Daftarkan Whitelist</span>
+                <i id="btnIcon" class="fas fa-paper-plane ml-2"></i>
+            </button>
+        </div>
+
+        <div id="statusBox" class="mt-4 hidden p-3 rounded-lg text-sm text-center"></div>
+
+        <div class="mt-8 p-4 bg-slate-900/50 rounded-lg border border-slate-700/50">
+            <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Instruksi:</h4>
+            <ul class="text-xs text-slate-400 space-y-1">
+                <li>• Gunakan format Nama_Belakang (Underscore)</li>
+                <li>• Sistem akan membuat file otomatis di scriptfiles</li>
+                <li>• Jika muncul pesan sukses, player bisa langsung login</li>
+            </ul>
+        </div>
+
+        <p class="text-center text-slate-600 text-[10px] mt-6 uppercase tracking-widest">Millanium RP &copy; 2025</p>
+    </div>
+
+    <script>
+        async function submitWhitelist() {
+            const nameInput = document.getElementById('playerName');
+            const name = nameInput.value.trim();
+            const btn = document.getElementById('btnSubmit');
+            const btnText = document.getElementById('btnText');
+            const statusBox = document.getElementById('statusBox');
+
+            if(!name) {
+                showStatus("Masukkan nama player terlebih dahulu!", "bg-red-500/20 text-red-400");
+                return;
+            }
+
+            // Start Loading
+            btn.disabled = true;
+            btnText.innerText = "Sedang Memproses...";
+            statusBox.classList.add('hidden');
+
+            try {
+                // MEMANGGIL API VERCEL (BUKAN LANGSUNG KE PANEL)
+                const response = await fetch('/api/whitelist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name })
+                });
+
+                const result = await response.json();
+
+                if(result.success) {
+                    showStatus("Berhasil! " + name + " telah terdaftar.", "bg-green-500/20 text-green-400");
+                    nameInput.value = ""; // Reset input
+                } else {
+                    showStatus("Gagal: " + (result.error || "Terjadi kesalahan"), "bg-red-500/20 text-red-400");
+                }
+            } catch (err) {
+                showStatus("Terjadi kesalahan jaringan/server.", "bg-red-500/20 text-red-400");
+            } finally {
+                // Stop Loading
+                btn.disabled = false;
+                btnText.innerText = "Daftarkan Whitelist";
+            }
+        }
+
+        function showStatus(msg, classes) {
+            const statusBox = document.getElementById('statusBox');
+            statusBox.innerText = msg;
+            statusBox.className = "mt-4 p-3 rounded-lg text-sm text-center " + classes;
+        }
+    </script>
+</body>
+</html>
