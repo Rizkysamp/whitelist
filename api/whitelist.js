@@ -1,39 +1,39 @@
 export default async function handler(req, res) {
-    if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
+    if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method Not Allowed' });
 
     const { name } = req.body;
+    if (!name) return res.status(400).json({ success: false, error: 'Nama tidak boleh kosong' });
+
     const panelUrl = "https://control.optiklink.com";
     const serverId = "e225d81e";
-    const apiKey = "8rWJmHyex7De4WXP"; // Pastikan ini benar
+    const apiKey = "8rWJmHyex7De4WXP"; // PASTIKAN COPY ULANG DARI PANEL
 
-    // Kita coba gunakan path tanpa garis miring di depan
+    // Bersihkan URL panel (hapus / di akhir jika ada)
+    const cleanUrl = panelUrl.replace(/\/$/, "");
+    
+    // Gunakan path relatif tanpa garis miring di depan
     const filePath = `scriptfiles/whitelist/${name}.txt`;
 
     try {
-        const response = await fetch(`${panelUrl}/api/client/servers/${serverId}/files/write?file=${encodeURIComponent(filePath)}`, {
+        const response = await fetch(`${cleanUrl}/api/client/servers/${serverId}/files/write?file=${encodeURIComponent(filePath)}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json',
-                'Accept': 'Application/vnd.pterodactyl.v1+json'
+                'Content-Type': 'text/plain', // Ubah ke text/plain agar panel menerima body kosong
+                'Accept': 'application/vnd.pterodactyl.v1+json'
             },
-            body: "" 
+            body: "Whitelisted by Web" // Isi sedikit teks agar file tidak benar-benar 0 byte
         });
 
-        if (response.ok) {
+        // Jika status 204 atau 200, berarti berhasil
+        if (response.status === 204 || response.status === 200 || response.ok) {
             return res.status(200).json({ success: true });
         } else {
-            // Jika gagal, kita ambil alasan error dari Pterodactyl
-            const errorResponse = await response.json();
-            let detail = "Gagal menulis file di panel";
-            
-            if (errorResponse.errors && errorResponse.errors.length > 0) {
-                detail = errorResponse.errors[0].detail;
-            }
-            
-            return res.status(500).json({ success: false, error: detail });
+            const textError = await response.text();
+            console.error("Panel Error:", textError);
+            return res.status(500).json({ success: false, error: `Panel Reject (Status: ${response.status})` });
         }
     } catch (error) {
-        return res.status(500).json({ success: false, error: error.message });
+        return res.status(500).json({ success: false, error: "Koneksi ke panel terputus" });
     }
 }
