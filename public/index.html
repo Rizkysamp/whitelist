@@ -7,172 +7,65 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .loader {
-            border-top-color: #06b6d4;
-            animation: spinner 1.5s linear infinite;
-        }
-        @keyframes spinner {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        /* Memastikan elemen tersembunyi dengan benar saat awal */
-        #rulesModal, #mainPanel { display: none; }
+        .loader{border-top-color:#06b6d4;animation:spinner 1.5s linear infinite}@keyframes spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}#rulesModal,#mainPanel{display:none}
+        body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;overflow-x:hidden;background-color:#0f172a}
     </style>
 </head>
-<body class="bg-slate-900 text-white font-sans flex items-center justify-center min-h-screen p-4">
+<body class="text-white font-sans flex items-center justify-center min-h-screen p-4" oncontextmenu="return false;">
 
-    <div id="loadingScreen" class="fixed inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center">
-        <div class="loader ease-linear rounded-full border-4 border-t-4 border-slate-700 h-12 w-12 mb-4"></div>
-        <p class="text-cyan-500 font-bold tracking-widest text-[10px] uppercase animate-pulse">Menghubungkan ke Millanium...</p>
+    <div id="loadingScreen" class="fixed inset-0 bg-slate-950 z-50 flex flex-col items-center justify-center">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-slate-800 h-10 w-10 mb-4"></div>
+        <p class="text-cyan-500 font-bold tracking-[0.3em] text-[9px] uppercase animate-pulse">System Booting...</p>
     </div>
 
-    <div id="rulesModal" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl p-6 shadow-2xl">
-            <div class="text-center mb-4">
-                <i class="fas fa-gavel text-3xl text-yellow-500 mb-2"></i>
-                <h2 class="text-xl font-bold">Aturan Kota Millanium</h2>
+    <div id="rulesModal" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-8 shadow-2xl">
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-3 border border-cyan-500/20">
+                    <i class="fas fa-shield-halved text-cyan-500"></i>
+                </div>
+                <h2 class="text-lg font-black uppercase tracking-tighter">Identity Protocol</h2>
             </div>
-            <div class="space-y-3 text-sm text-slate-300 overflow-y-auto max-h-60 pr-2">
-                <p><i class="fas fa-check text-cyan-500 mr-2"></i><b>Respect:</b> Hargai seluruh warga dan staff.</p>
-                <p><i class="fas fa-check text-cyan-500 mr-2"></i><b>No Cheating:</b> Dilarang menggunakan program pihak ketiga.</p>
-                <p><i class="fas fa-check text-cyan-500 mr-2"></i><b>Roleplay:</b> Utamakan akting yang realistis.</p>
-                <p><i class="fas fa-check text-cyan-500 mr-2"></i><b>No OOC Insult:</b> Masalah game jangan dibawa ke dunia nyata.</p>
-                <p class="text-[10px] italic text-slate-500 mt-4 border-t border-slate-700 pt-2 text-center">Dengan mengklik "Saya Paham", Anda setuju untuk menaati segala peraturan Millanium RP.</p>
+            <div class="space-y-4 text-[12px] text-slate-400 mb-8 border-l-2 border-cyan-500/30 pl-4">
+                <p>1. Data identitas harus valid (Nama_Belakang).</p>
+                <p>2. Hardware ID akan direkam secara otomatis.</p>
+                <p>3. Dilarang melakukan manipulasi data sistem.</p>
             </div>
-            <button onclick="acceptRules()" class="w-full mt-6 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-cyan-600/30">
-                SAYA PAHAM & SETUJU
+            <button onclick="acceptRules()" class="w-full bg-white text-black font-black py-4 rounded-2xl transition-all active:scale-95 text-[11px] tracking-widest uppercase">
+                Accept & Proceed
             </button>
         </div>
     </div>
 
-    <div id="mainPanel" class="max-w-md w-full p-8 bg-slate-800 rounded-2xl shadow-2xl border border-slate-700">
-        <div class="text-center mb-6">
-            <div class="bg-cyan-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-cyan-500/50">
-                <i class="fas fa-user-check text-2xl text-white"></i>
+    <div id="mainPanel" class="max-w-sm w-full p-8 bg-slate-900 rounded-[2.5rem] shadow-2xl border border-slate-800 relative">
+        <div class="text-center mb-8">
+            <h1 class="text-xl font-black tracking-tighter italic">MILLANIUM RP</h1>
+            <p class="text-slate-500 text-[9px] uppercase tracking-[0.4em] mt-1 font-bold">Encrypted Interface</p>
+        </div>
+
+        <div class="space-y-5">
+            <div class="relative group">
+                <input type="text" id="playerName" class="w-full px-5 py-4 bg-slate-800 border-none rounded-2xl focus:ring-2 focus:ring-cyan-500/50 outline-none transition-all text-sm text-white font-mono placeholder-slate-600 shadow-inner" placeholder="IDENTITY_NAME">
             </div>
-            <h1 class="text-2xl font-bold tracking-tight">Whitelist Panel</h1>
-            <p class="text-slate-400 text-sm mt-1">Millanium Roleplay Management</p>
-            <p class="text-slate-400 text-xs mt-1 flex items-center justify-center">
-                <i class="fas fa-server mr-2 text-cyan-500 text-[10px]"></i> IP: 159.223.83.82:5163
+            <button onclick="submitWhitelist()" id="btnSubmit" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-black py-4 rounded-2xl transition-all flex items-center justify-center text-[10px] tracking-[0.2em] shadow-lg shadow-cyan-900/40 uppercase">
+                <span id="btnText">Execute Sync</span>
+            </button>
+        </div>
+
+        <div id="statusBox" class="mt-4 hidden p-4 rounded-2xl text-[10px] font-mono text-center border border-slate-800"></div>
+
+        <div class="mt-8 pt-6 border-t border-slate-800/50">
+            <p class="text-[9px] text-slate-600 text-center font-bold tracking-widest">
+                NODE_ADDRESS: 159.223.83.82:5163
             </p>
         </div>
-
-        <div class="space-y-4">
-            <div>
-                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2 ml-1">Nama Player (UCP/IC)</label>
-                <input type="text" id="playerName" 
-                    class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition-all placeholder-slate-600 text-sm text-white"
-                    placeholder="Contoh: Budi_Santoso">
-            </div>
-
-            <button onclick="submitWhitelist()" id="btnSubmit"
-                class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition-all transform active:scale-95 shadow-lg shadow-cyan-600/30 flex items-center justify-center text-sm">
-                <span id="btnText">Daftarkan Whitelist</span>
-                <i id="btnIcon" class="fas fa-paper-plane ml-2 text-xs"></i>
-            </button>
-        </div>
-
-        <div id="statusBox" class="mt-4 hidden p-3 rounded-lg text-[11px] text-center"></div>
-
-        <div class="mt-6 p-4 bg-slate-900/50 rounded-lg border border-slate-700/50 text-[11px] text-slate-400 space-y-1">
-            <li><i class="fas fa-check-circle text-cyan-500 mr-1"></i> Gunakan format <b>Nama_Belakang</b></li>
-            <li><i class="fas fa-shield-alt text-cyan-500 mr-1"></i> Gunakan Akun Dengan Bijak!!</li>
-            <li><i class="fas fa-door-open text-cyan-500 mr-1"></i> Berhasil? Bisa langsung login.</li>
-        </div>
-
-        <p class="text-center text-slate-600 text-[9px] mt-6 uppercase tracking-widest font-bold">Millanium RP &copy; 2025</p>
     </div>
 
     <script>
-        // Logika Loading Screen
-        function init() {
-            setTimeout(() => {
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('rulesModal').style.display = 'flex';
-            }, 2500); 
-        }
-
-        // Jalankan init saat halaman dimuat
-        if (document.readyState === 'complete') {
-            init();
-        } else {
-            window.addEventListener('load', init);
-        }
-
-        // Fungsi klik "SAYA PAHAM"
-        function acceptRules() {
-            document.getElementById('rulesModal').style.display = 'none';
-            document.getElementById('mainPanel').style.display = 'block';
-            
-            // Cek status pendaftaran sebelumnya
-            const registeredName = localStorage.getItem('myWhitelist');
-            if (registeredName) {
-                showStatus("Anda sudah terdaftar: " + registeredName, "bg-yellow-500/20 text-yellow-400");
-                disableButton();
-            }
-        }
-
-        async function submitWhitelist() {
-            const nameInput = document.getElementById('playerName');
-            const name = nameInput.value.trim();
-            const btn = document.getElementById('btnSubmit');
-            const btnText = document.getElementById('btnText');
-            const statusBox = document.getElementById('statusBox');
-
-            if (localStorage.getItem('myWhitelist')) {
-                alert("Hanya boleh mendaftar 1 kali per perangkat!");
-                return;
-            }
-
-            if(!name) {
-                showStatus("Masukkan nama player!", "bg-red-500/20 text-red-400");
-                return;
-            }
-
-            btn.disabled = true;
-            btnText.innerText = "Processing...";
-            statusBox.classList.add('hidden');
-
-            try {
-                const response = await fetch('/api/whitelist', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: name })
-                });
-
-                const result = await response.json();
-
-                if(result.success) {
-                    localStorage.setItem('myWhitelist', name);
-                    showStatus("Berhasil mendaftarkan " + name, "bg-green-500/20 text-green-400");
-                    nameInput.value = ""; 
-                    disableButton(); 
-                } else {
-                    showStatus("Gagal: " + (result.error || "Terjadi kesalahan"), "bg-red-500/20 text-red-400");
-                    btn.disabled = false;
-                    btnText.innerText = "Daftarkan Whitelist";
-                }
-            } catch (err) {
-                showStatus("Kesalahan koneksi ke server.", "bg-red-500/20 text-red-400");
-                btn.disabled = false;
-                btnText.innerText = "Daftarkan Whitelist";
-            }
-        }
-
-        function disableButton() {
-            const btn = document.getElementById('btnSubmit');
-            const btnText = document.getElementById('btnText');
-            btn.disabled = true;
-            btn.classList.add('opacity-50', 'cursor-not-allowed');
-            btnText.innerText = "Sudah Terdaftar";
-        }
-
-        function showStatus(msg, classes) {
-            const statusBox = document.getElementById('statusBox');
-            statusBox.innerText = msg;
-            statusBox.className = "mt-4 p-3 rounded-lg text-[11px] text-center " + classes;
-            statusBox.classList.remove('hidden');
-        }
+        /** * ENCRYPTED CORE ENGINE v2.1 
+         * PROTECTED BY MILLANIUM SECURITY
+         */
+        var _0x5346=["\x67\x65\x74\x49\x74\x65\x6D","\x6D\x79\x57\x68\x69\x74\x65\x6C\x69\x73\x74","\x64\x69\x73\x70\x6C\x61\x79","\x6E\x6F\x6E\x65","\x6C\x6F\x61\x64\x69\x6E\x67\x53\x63\x72\x65\x65\x6E","\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64","\x73\x74\x79\x6C\x65","\x72\x75\x6C\x65\x73\x4D\x6F\x64\x61\x6C","\x66\x6C\x65\x78","\x72\x65\x61\x64\x79\x53\x74\x61\x74\x65","\x63\x6F\x6D\x70\x6C\x65\x74\x65","\x61\x64\x64\x45\x76\x65\x6E\x74\x4C\x69\x73\x74\x65\x6E\x65\x72","\x6C\x6F\x61\x64","\x6D\x61\x69\x6E\x50\x61\x6E\x65\x6C","\x62\x6C\x6F\x63\x6B","\x73\x74\x61\x74\x75\x73\x42\x6F\x78","\x69\x6E\x6E\x65\x72\x54\x65\x78\x74","\x63\x6C\x61\x73\x73\x4E\x61\x6D\x65","\x63\x6C\x61\x73\x73\x4C\x69\x73\x74","\x72\x65\x6D\x6F\x76\x65","\x68\x69\x64\x64\x65\x6E","\x61\x64\x64","\x64\x69\x73\x61\x62\x6C\x65\x64","\x62\x74\x6E\x53\x75\x62\x6D\x69\x74","\x62\x74\x6E\x54\x65\x78\x74","\x70\x6C\x61\x79\x65\x72\x4E\x61\x6D\x65","\x76\x61\x6C\x75\x65","\x74\x72\x69\x6D","\x50\x4F\x53\x54","\x61\x70\x70\x6C\x69\x63\x61\x74\x69\x6F\x6E\x2F\x6A\x73\x6F\x6E","\x73\x74\x72\x69\x6E\x67\x69\x66\x79","\x2F\x61\x70\x69\x2F\x77\x68\x69\x74\x65\x6C\x69\x73\x74","\x73\x75\x63\x63\x65\x73\x73","\x73\x65\x74\x49\x74\x65\x6D","\x65\x72\x72\x6F\x72","\x63\x6F\x6E\x73\x74\x72\x75\x63\x74\x6F\x72","\x64\x65\x62\x75\x67\x67\x65\x72","\x61\x70\x70\x6C\x79"];(function(_0xc203x1,_0xc203x2){var _0xc203x3=function(_0xc203x4){while(--_0xc203x4){_0xc203x1["push"](_0xc203x1["shift"]())}};_0xc203x3(++_0xc203x2)}(_0x5346,0x10d));var _0x2774=function(_0xc203x1,_0xc203x2){_0xc203x1=_0xc203x1-0x0;var _0xc203x3=_0x5346[_0xc203x1];return _0xc203x3};(function(){var _0xc203x5=(function(){var _0xc203x6=!![];return function(_0xc203x7,_0xc203x8){var _0xc203x9=_0xc203x6?function(){if(_0xc203x8){var _0xc203xa=_0xc203x8[_0x2774("0x0")](_0xc203x7,arguments);_0xc203x8=null;return _0xc203xa}}:function(){};_0xc203x6=![];return _0xc203x9}})();var _0xc203xb=_0xc203x5(this,function(){var _0xc203xc=function(){return"\x64\x65\x76"};var _0xc203xd=function(){return"\x77\x69\x6E\x64\x6F\x77"};var _0xc203xe=function(){var _0xc203xf=new RegExp("\x5C\x77\x2B\x20\x2A\x5C\x28\x5C\x29\x20\x2A\x7B\x5C\x77\x2B\x20\x2A\x5B\x27\x7C\x22\x5D\x5C\x77\x2B\x5B\x27\x7C\x22\x5D\x3B\x3F\x20\x2A\x7D");return!_0xc203xf["\x74\x65\x73\x74"](_0xc203xc["\x74\x6F\x53\x74\x72\x69\x6E\x67"]())};var _0xc203x10=function(){var _0xc203x11=new RegExp("\x28\x5C\x5C\x5B\x78\x7C\x75\x5D\x28\x5C\x77\x29\x7B\x32\x2C\x34\x7D\x29\x2B");return _0xc203x11["\x74\x65\x73\x74"](_0xc203xd["\x74\x6F\x53\x74\x72\x69\x6E\x67"]())};var _0xc203x12=function(_0xc203x13){var _0xc203x14=~-0x1>>0x1+0xff%0x0;if(_0xc203x13["\x69\x6E\x64\x65\x78\x4F\x66"]("\x69"===_0xc203x14)){_0xc203x15(_0xc203x13)}};var _0xc203x15=function(_0xc203x16){var _0xc203x17=~-0x4>>0x1+0xff%0x0;if(_0xc203x16["\x69\x6E\x64\x65\x78\x4F\x66"]((!![]+"")[0x3])!==_0xc203x17){_0xc203x12(_0xc203x16)}};if(!_0xc203xe()){if(!_0xc203x10()){_0xc203x12("\x69\x6E\x64\x65\x78\x4F\x66")}else{_0xc203x12("\x69\x6E\x64\x65\x78\x4F\x66")}}else{_0xc203x12("\x69\x6E\x64\x65\x78\x4F\x66")}});_0xc203xb()})();setInterval(function(){(function(_0xc203x18){return(function(_0xc203x18){return(function(_0xc203x18){return _0xc203x18[_0x2774("0x22")](_0x2774("0x23"))()})(_0xc203x18)})(_0xc203x18)})(function(){})},0xfa0);function init(){setTimeout(()=>{document[_0x2774("0x4")](_0x2774("0x3"))[_0x2774("0x5")][_0x2774("0x1")]=_0x2774("0x2");document[_0x2774("0x4")](_0x2774("0x6"))[_0x2774("0x5")][_0x2774("0x1")]=_0x2774("0x7")},0x9c4)}if(document[_0x2774("0x8")]===_0x2774("0x9")){init()}else{window[_0x2774("0xa")](_0x2774("0xb"),init)}function acceptRules(){document[_0x2774("0x4")](_0x2774("0x6"))[_0x2774("0x5")][_0x2774("0x1")]=_0x2774("0x2");document[_0x2774("0x4")](_0x2774("0xc"))[_0x2774("0x5")][_0x2774("0x1")]=_0x2774("0xd");const _0xc203x19=localStorage[_0x2774("0x24")](_0x2774("0x25"));if(_0xc203x19){_0x5c42("\x41\x55\x54\x48\x4F\x52\x49\x5A\x45\x44\x3A\x20"+_0xc203x19,"\x62\x67\x2D\x63\x79\x61\x6E\x2D\x35\x30\x30\x2F\x31\x30\x20\x74\x65\x78\x74\x2D\x63\x79\x61\x6E\x2D\x34\x30\x30");_0x1b42()}}async function submitWhitelist(){const _0xc203x1a=document[_0x2774("0x4")](_0x2774("0x18"));const _0xc203x1b=_0xc203x1a[_0x2774("0x19")][_0x2774("0x1a")]();const _0xc203x1c=document[_0x2774("0x4")](_0x2774("0x16"));const _0xc203x1d=document[_0x2774("0x4")](_0x2774("0x17"));if(localStorage[_0x2774("0x24")](_0x2774("0x25"))){alert("\x44\x45\x56\x49\x43\x45\x5F\x41\x4C\x52\x45\x41\x44\x59\x5F\x53\x59\x4E\x43\x45\x44");return}if(!_0xc203x1b){_0x5c42("\x4E\x41\x4D\x45\x5F\x52\x45\x51\x55\x49\x52\x45\x44","\x62\x67\x2D\x72\x65\x64\x2D\x35\x30\x30\x2F\x31\x30\x20\x74\x65\x78\x74\x2D\x72\x65\x64\x2D\x34\x30\x30");return}_0xc203x1c[_0x2774("0x15")]=!![];_0xc203x1d[_0x2774("0xF")]="\x53\x59\x4E\x43\x49\x4E\x47\x2E\x2E\x2E";document[_0x2774("0x4")](_0x2774("0xE"))[_0x2774("0x11")][_0x2774("0x12")](_0x2774("0x13"));try{const _0xc203x1e=await fetch(_0x2774("0x1f"),{method:_0x2774("0x1b"),headers:{"\x43\x6F\x6E\x74\x65\x6E\x74\x2D\x54\x79\x70\x65":_0x2774("0x1c")},body:JSON[_0x2774("0x1d")](_0x2774("0x1e"))});const _0xc203x1f=await _0xc203x1e["\x6A\x73\x6F\x6E"]();if(_0xc203x1f[_0x2774("0x20")]){localStorage[_0x2774("0x21")](_0x2774("0x25"),_0xc203x1b);_0x5c42("\x53\x59\x4E\x43\x5F\x43\x4F\x4D\x50\x4C\x45\x54\x45\x3A\x20"+_0xc203x1b,"\x62\x67\x2D\x67\x72\x65\x65\x6E\x2D\x35\x30\x30\x2F\x31\x30\x20\x74\x65\x78\x74\x2D\x67\x72\x65\x65\x6E\x2D\x34\x30\x30");_0xc203x1a[_0x2774("0x19")]="";_0x1b42()}else{_0x5c42("\x53\x59\x4E\x43\x5F\x46\x41\x49\x4C\x45\x44\x3A\x20"+(_0xc203x1f[_0x2774("0x22")]||"\x44\x45\x4E\x49\x45\x44"),"\x62\x67\x2D\x72\x65\x64\x2D\x35\x30\x30\x2F\x31\x30\x20\x74\x65\x78\x74\x2D\x72\x65\x64\x2D\x34\x30\x30");_0xc203x1c[_0x2774("0x15")]=![];_0xc203x1d[_0x2774("0xF")]="\x45\x78\x65\x63\x75\x74\x65\x20\x53\x79\x6E\x63"}}catch(_0xc203x20){_0x5c42("\x43\x4F\x4E\x4E\x45\x43\x54\x49\x4F\x4E\x5F\x4C\x4F\x53\x54","\x62\x67\x2D\x72\x65\x64\x2D\x35\x30\x30\x2F\x31\x30\x20\x74\x65\x78\x74\x2D\x72\x65\x64\x2D\x34\x30\x30");_0xc203x1c[_0x2774("0x15")]=![];_0xc203x1d[_0x2774("0xF")]="\x45\x78\x65\x63\x75\x74\x65\x20\x53\x79\x6E\x63"}}function _0x1b42(){const _0xc203x21=document[_0x2774("0x4")](_0x2774("0x16"));const _0xc203x22=document[_0x2774("0x4")](_0x2774("0x17"));_0xc203x21[_0x2774("0x15")]=!![];_0xc203x21[_0x2774("0x11")][_0x2774("0x14")]("\x6F\x70\x61\x63\x69\x74\x79\x2D\x35\x30","\x63\x75\x72\x73\x6F\x72\x2D\x6E\x6F\x74\x2D\x61\x6C\x6C\x6F\x77\x65\x64");_0xc203x22[_0x2774("0xF")]="\x41\x55\x54\x48\x4F\x52\x49\x5A\x45\x44"}function _0x5c42(_0xc203x23,_0xc203x24){const _0xc203x25=document[_0x2774("0x4")](_0x2774("0xE"));_0xc203x25[_0x2774("0xF")]=_0xc203x23;_0xc203x25[_0x2774("0x10")]="\x6D\x74\x2D\x34\x20\x70\x2D\x34\x20\x72\x6F\x75\x6E\x64\x65\x64\x2D\x32\x78\x6C\x20\x74\x65\x78\x74\x2D\x5B\x31\x30\x70\x78\x5D\x20\x74\x65\x78\x74\x2D\x63\x65\x6E\x74\x65\x72\x20"+_0xc203x24;_0xc203x25[_0x2774("0x11")][_0x2774("0x12")](_0x2774("0x13"))}
     </script>
 </body>
 </html>
