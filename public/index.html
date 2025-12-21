@@ -6,89 +6,106 @@
     <title>Panel Whitelist | Millanium Roleplay</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Animasi Loading */
+        .loader {
+            border-top-color: #06b6d4;
+            animation: spinner 1.5s linear infinite;
+        }
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .hidden-element { display: none; }
+    </style>
 </head>
 <body class="bg-slate-900 text-white font-sans flex items-center justify-center min-h-screen p-4">
 
-    <div class="max-w-md w-full p-8 bg-slate-800 rounded-2xl shadow-2xl border border-slate-700">
-        <div class="text-center mb-8">
+    <div id="loadingScreen" class="fixed inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-slate-700 h-12 w-12 mb-4"></div>
+        <p class="text-cyan-500 font-bold tracking-widest text-xs uppercase animate-pulse">Menghubungkan ke Millanium...</p>
+    </div>
+
+    <div id="rulesModal" class="hidden-element fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl p-6 shadow-2xl">
+            <div class="text-center mb-4">
+                <i class="fas fa-gavel text-3xl text-yellow-500 mb-2"></i>
+                <h2 class="text-xl font-bold">Aturan Kota Millanium</h2>
+            </div>
+            <div class="space-y-3 text-sm text-slate-300 overflow-y-auto max-h-60 pr-2">
+                <p>1. <span class="text-cyan-500">Respect:</span> Hargai seluruh warga dan staff.</p>
+                <p>2. <span class="text-cyan-500">No Cheating:</span> Dilarang keras menggunakan program pihak ketiga.</p>
+                <p>3. <span class="text-cyan-500">Roleplay:</span> Utamakan akting yang realistis di dalam kota.</p>
+                <p>4. <span class="text-cyan-500">No OOC Insult:</span> Masalah di game jangan dibawa ke dunia nyata.</p>
+                <p class="text-xs italic text-slate-500 mt-4 border-t border-slate-700 pt-2">Dengan mengklik "Saya Paham", Anda setuju untuk menaati segala peraturan yang ada di Millanium Roleplay.</p>
+            </div>
+            <button onclick="acceptRules()" class="w-full mt-6 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-cyan-600/30">
+                SAYA PAHAM & SETUJU
+            </button>
+        </div>
+    </div>
+
+    <div id="mainPanel" class="hidden-element max-w-md w-full p-8 bg-slate-800 rounded-2xl shadow-2xl border border-slate-700">
+        <div class="text-center mb-6">
             <div class="bg-cyan-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-cyan-500/50">
                 <i class="fas fa-user-check text-2xl text-white"></i>
             </div>
             <h1 class="text-2xl font-bold tracking-tight">Whitelist Panel</h1>
-            <p class="text-slate-400 text-sm mt-2">Millanium Roleplay Management</p>
+            <p class="text-slate-400 text-sm mt-1">Millanium Roleplay Management</p>
+            <p class="text-slate-400 text-xs mt-1 flex items-center justify-center">
+                <i class="fas fa-server mr-2 text-cyan-500"></i> IP: 159.223.83.82:5163
+            </p>
         </div>
 
-        <div class="mb-6 p-4 bg-slate-900 border border-slate-700 rounded-xl flex items-center justify-between group">
-            <div class="flex items-center space-x-3">
-                <div class="text-cyan-500">
-                    <i class="fas fa-server"></i>
-                </div>
-                <div>
-                    <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Server IP</p>
-                    <p class="text-sm font-mono text-cyan-400" id="serverIP">159.223.83.82:5163</p>
-                </div>
-            </div>
-            <button onclick="copyIP()" class="text-slate-500 hover:text-white transition-colors p-2">
-                <i class="far fa-copy"></i>
-            </button>
-        </div>
-
-        <div class="space-y-6">
+        <div class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-2">Nama Player (UCP/IC)</label>
+                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2 ml-1">Nama Player (UCP/IC)</label>
                 <input type="text" id="playerName" 
-                    class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition-all placeholder-slate-600 text-white"
+                    class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition-all placeholder-slate-600 text-sm text-white"
                     placeholder="Contoh: Budi_Santoso">
             </div>
 
             <button onclick="submitWhitelist()" id="btnSubmit"
-                class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition-all transform active:scale-95 shadow-lg shadow-cyan-600/30 flex items-center justify-center">
+                class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition-all transform active:scale-95 shadow-lg shadow-cyan-600/30 flex items-center justify-center text-sm">
                 <span id="btnText">Daftarkan Whitelist</span>
                 <i id="btnIcon" class="fas fa-paper-plane ml-2"></i>
             </button>
         </div>
 
-        <div id="statusBox" class="mt-4 hidden p-3 rounded-lg text-sm text-center"></div>
+        <div id="statusBox" class="mt-4 hidden p-3 rounded-lg text-[11px] text-center"></div>
 
-        <div class="mt-8 p-4 bg-slate-900/50 rounded-lg border border-slate-700/50">
-            <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                <i class="fas fa-info-circle mr-1 text-cyan-500"></i> Instruksi:
-            </h4>
-            <ul class="text-xs text-slate-400 space-y-2">
-                <li class="flex items-start">
-                    <span class="text-cyan-500 mr-2">•</span>
-                    <span>Gunakan format <b>Nama_Belakang</b> (Underscore)</span>
-                </li>
-                <li class="flex items-start">
-                    <span class="text-cyan-500 mr-2">•</span>
-                    <span>Sistem akan membuat Account Player. Gunakan Dengan Bijak!!</span>
-                </li>
-                <li class="flex items-start">
-                    <span class="text-cyan-500 mr-2">•</span>
-                    <span>Jika muncul pesan sukses, player bisa langsung login.</span>
-                </li>
+        <div class="mt-6 p-4 bg-slate-900/50 rounded-lg border border-slate-700/50">
+            <ul class="text-[11px] text-slate-400 space-y-1">
+                <li><i class="fas fa-check-circle text-cyan-500 mr-1"></i> Gunakan format <b>Nama_Belakang</b></li>
+                <li><i class="fas fa-shield-alt text-cyan-500 mr-1"></i> Gunakan Akun Dengan Bijak!!</li>
+                <li><i class="fas fa-door-open text-cyan-500 mr-1"></i> Berhasil? Bisa langsung login.</li>
             </ul>
         </div>
 
-        <p class="text-center text-slate-600 text-[10px] mt-6 uppercase tracking-widest">Millanium RP &copy; 2025</p>
+        <p class="text-center text-slate-600 text-[9px] mt-6 uppercase tracking-widest">Millanium RP &copy; 2025</p>
     </div>
 
     <script>
-        // Fungsi Copy IP
-        function copyIP() {
-            const ipText = document.getElementById('serverIP').innerText;
-            navigator.clipboard.writeText(ipText);
-            alert("IP Server berhasil disalin: " + ipText);
-        }
+        // Simulasi Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden-element');
+                document.getElementById('rulesModal').classList.remove('hidden-element');
+            }, 2500); // Tampil loading selama 2.5 detik
+        });
 
-        // FUNGSI CEK SAAT WEB DIBUKA
-        window.onload = function() {
+        // Fungsi Menyetujui Aturan
+        function acceptRules() {
+            document.getElementById('rulesModal').classList.add('hidden-element');
+            document.getElementById('mainPanel').classList.remove('hidden-element');
+            
+            // Cek jika sudah pernah daftar sebelumnya
             const registeredName = localStorage.getItem('myWhitelist');
             if (registeredName) {
-                showStatus("Anda sudah terdaftar dengan nama: " + registeredName, "bg-yellow-500/20 text-yellow-400");
+                showStatus("Anda sudah terdaftar: " + registeredName, "bg-yellow-500/20 text-yellow-400");
                 disableButton();
             }
-        };
+        }
 
         async function submitWhitelist() {
             const nameInput = document.getElementById('playerName');
@@ -98,17 +115,17 @@
             const statusBox = document.getElementById('statusBox');
 
             if (localStorage.getItem('myWhitelist')) {
-                alert("Satu perangkat hanya diperbolehkan mendaftarkan 1 nama!");
+                alert("Hanya diperbolehkan 1 nama per perangkat!");
                 return;
             }
 
             if(!name) {
-                showStatus("Masukkan nama player terlebih dahulu!", "bg-red-500/20 text-red-400");
+                showStatus("Masukkan nama player!", "bg-red-500/20 text-red-400");
                 return;
             }
 
             btn.disabled = true;
-            btnText.innerText = "Sedang Memproses...";
+            btnText.innerText = "Processing...";
             statusBox.classList.add('hidden');
 
             try {
@@ -122,7 +139,7 @@
 
                 if(result.success) {
                     localStorage.setItem('myWhitelist', name);
-                    showStatus("Berhasil! " + name + " telah terdaftar.", "bg-green-500/20 text-green-400");
+                    showStatus("Berhasil mendaftarkan " + name, "bg-green-500/20 text-green-400");
                     nameInput.value = ""; 
                     disableButton(); 
                 } else {
@@ -131,7 +148,7 @@
                     btnText.innerText = "Daftarkan Whitelist";
                 }
             } catch (err) {
-                showStatus("Terjadi kesalahan jaringan/server.", "bg-red-500/20 text-red-400");
+                showStatus("Kesalahan jaringan/server.", "bg-red-500/20 text-red-400");
                 btn.disabled = false;
                 btnText.innerText = "Daftarkan Whitelist";
             }
@@ -148,7 +165,7 @@
         function showStatus(msg, classes) {
             const statusBox = document.getElementById('statusBox');
             statusBox.innerText = msg;
-            statusBox.className = "mt-4 p-3 rounded-lg text-sm text-center " + classes;
+            statusBox.className = "mt-4 p-3 rounded-lg text-[11px] text-center " + classes;
             statusBox.classList.remove('hidden');
         }
     </script>
