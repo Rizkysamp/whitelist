@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     if (!name) return res.status(400).json({ success: false, error: 'Nama tidak boleh kosong' });
 
     const panelUrl = "https://cx.galaxyhost.biz.id";
-    const serverId = "e2f5a458";
+    const serverId = "c3a6f2ed";
     const apiKey = "ptlc_5J2dxXOlwNxmiQIofjqSCuDNfyctfESju4YyxwhGcoO"; // PASTIKAN COPY ULANG DARI PANEL
 
     // Bersihkan URL panel (hapus / di akhir jika ada)
