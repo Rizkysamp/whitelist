@@ -3,136 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Whitelist | Millanium RP</title>
+    <title>Panel Whitelist | Millanium Roleplay</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .loader{border-top-color:#06b6d4;animation:spinner 1s linear infinite}@keyframes spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-        #rulesModal,#mainPanel{display:none}
-        body{background-color:#0a0f1a;user-select:none;-webkit-user-select:none;}
+        .loader {
+            border-top-color: #06b6d4;
+            animation: spinner 1.5s linear infinite;
+        }
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Memastikan elemen tersembunyi dengan benar saat awal */
+        #rulesModal, #mainPanel { display: none; }
     </style>
 </head>
-<body class="text-white font-sans flex items-center justify-center min-h-screen p-4">
+<body class="bg-slate-900 text-white font-sans flex items-center justify-center min-h-screen p-4">
 
-    <div id="loadingScreen" class="fixed inset-0 bg-slate-950 z-50 flex flex-col items-center justify-center">
-        <div class="loader ease-linear rounded-full border-2 border-t-2 border-slate-800 h-10 w-10 mb-4"></div>
-        <p class="text-cyan-500 font-bold tracking-[0.3em] text-[10px] uppercase animate-pulse">System Initializing...</p>
+    <div id="loadingScreen" class="fixed inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-slate-700 h-12 w-12 mb-4"></div>
+        <p class="text-cyan-500 font-bold tracking-widest text-[10px] uppercase animate-pulse">Menghubungkan ke Millanium...</p>
     </div>
 
     <div id="rulesModal" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-3xl p-8 shadow-2xl border-t-2 border-t-cyan-600">
-            <h2 class="text-lg font-black uppercase text-center mb-6">Security Access</h2>
-            <div class="space-y-3 text-[12px] text-slate-400 mb-8 border-l-2 border-cyan-600 pl-4">
-                <p>• Gunakan format Nama_Belakang.</p>
-                <p>• Dilarang keras melakukan bypass sistem.</p>
-                <p>• Segala aktivitas tercatat secara otomatis.</p>
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl p-6 shadow-2xl">
+            <div class="text-center mb-4">
+                <i class="fas fa-gavel text-3xl text-yellow-500 mb-2"></i>
+                <h2 class="text-xl font-bold">Aturan Kota Millanium</h2>
             </div>
-            <button onclick="acceptRules()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-4 rounded-2xl transition-all active:scale-95 text-[11px] tracking-widest uppercase">
-                Authorize Identity
+            <div class="space-y-3 text-sm text-slate-300 overflow-y-auto max-h-60 pr-2">
+                <p><i class="fas fa-check text-cyan-500 mr-2"></i><b>Respect:</b> Hargai seluruh warga dan staff.</p>
+                <p><i class="fas fa-check text-cyan-500 mr-2"></i><b>No Cheating:</b> Dilarang menggunakan program pihak ketiga.</p>
+                <p><i class="fas fa-check text-cyan-500 mr-2"></i><b>Roleplay:</b> Utamakan akting yang realistis.</p>
+                <p><i class="fas fa-check text-cyan-500 mr-2"></i><b>No OOC Insult:</b> Masalah game jangan dibawa ke dunia nyata.</p>
+                <p class="text-[10px] italic text-slate-500 mt-4 border-t border-slate-700 pt-2 text-center">Dengan mengklik "Saya Paham", Anda setuju untuk menaati segala peraturan Millanium RP.</p>
+            </div>
+            <button onclick="acceptRules()" class="w-full mt-6 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-cyan-600/30">
+                SAYA PAHAM & SETUJU
             </button>
         </div>
     </div>
 
-    <div id="mainPanel" class="max-w-sm w-full p-8 bg-slate-900 rounded-[2.5rem] shadow-2xl border border-slate-800 relative">
-        <div class="text-center mb-8">
-            <h1 class="text-xl font-black italic text-cyan-500">MILLANIUM RP</h1>
-            <p class="text-slate-500 text-[9px] uppercase tracking-[0.4em] mt-1">Whitelist Terminal</p>
+    <div id="mainPanel" class="max-w-md w-full p-8 bg-slate-800 rounded-2xl shadow-2xl border border-slate-700">
+        <div class="text-center mb-6">
+            <div class="bg-cyan-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-cyan-500/50">
+                <i class="fas fa-user-check text-2xl text-white"></i>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight">Whitelist Panel</h1>
+            <p class="text-slate-400 text-sm mt-1">Millanium Roleplay Management</p>
+            <p class="text-slate-400 text-xs mt-1 flex items-center justify-center">
+                <i class="fas fa-server mr-2 text-cyan-500 text-[10px]"></i> IP: 159.223.83.82:5163
+            </p>
         </div>
 
         <div class="space-y-4">
-            <input type="text" id="playerName" class="w-full px-5 py-4 bg-slate-800 border-none rounded-2xl focus:ring-2 focus:ring-cyan-500/50 outline-none transition-all text-sm text-white font-mono" placeholder="NAME_IDENTITY">
-            <button onclick="submitWhitelist()" id="btnSubmit" class="w-full bg-white text-black font-black py-4 rounded-2xl transition-all flex items-center justify-center text-[10px] tracking-[0.1em] uppercase active:scale-95">
-                <span id="btnText">Execute Sync</span>
+            <div>
+                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2 ml-1">Nama Player (UCP/IC)</label>
+                <input type="text" id="playerName" 
+                    class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition-all placeholder-slate-600 text-sm text-white"
+                    placeholder="Contoh: Budi_Santoso">
+            </div>
+
+            <button onclick="submitWhitelist()" id="btnSubmit"
+                class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition-all transform active:scale-95 shadow-lg shadow-cyan-600/30 flex items-center justify-center text-sm">
+                <span id="btnText">Daftarkan Whitelist</span>
+                <i id="btnIcon" class="fas fa-paper-plane ml-2 text-xs"></i>
             </button>
         </div>
 
-        <div id="statusBox" class="mt-4 hidden p-4 rounded-2xl text-[10px] font-mono text-center border border-slate-800 bg-black/20"></div>
+        <div id="statusBox" class="mt-4 hidden p-3 rounded-lg text-[11px] text-center"></div>
 
-        <div class="mt-8 pt-6 border-t border-slate-800/50 text-center">
-            <p class="text-[9px] text-slate-600 font-bold tracking-widest uppercase">IP: 159.223.83.82:5163</p>
+        <div class="mt-6 p-4 bg-slate-900/50 rounded-lg border border-slate-700/50 text-[11px] text-slate-400 space-y-1">
+            <li><i class="fas fa-check-circle text-cyan-500 mr-1"></i> Gunakan format <b>Nama_Belakang</b></li>
+            <li><i class="fas fa-shield-alt text-cyan-500 mr-1"></i> Gunakan Akun Dengan Bijak!!</li>
+            <li><i class="fas fa-door-open text-cyan-500 mr-1"></i> Berhasil? Bisa langsung login.</li>
         </div>
+
+        <p class="text-center text-slate-600 text-[9px] mt-6 uppercase tracking-widest font-bold">Millanium RP &copy; 2025</p>
     </div>
 
-    <script>
-        // Versi ini menggunakan Base64 untuk proteksi agar browser tidak bingung
-        const _s = (b) => atob(b);
-
-        // Fungsi Penampil Elemen (Dienkripsi)
-        function init() {
-            setTimeout(() => {
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('rulesModal').style.display = 'flex';
-            }, 1500);
-        }
-
-        // Jalankan saat siap
-        if (document.readyState === 'complete') { init(); } 
-        else { window.addEventListener('load', init); }
-
-        function acceptRules() {
-            document.getElementById('rulesModal').style.display = 'none';
-            document.getElementById('mainPanel').style.display = 'block';
-            const saved = localStorage.getItem('myWhitelist');
-            if(saved) {
-                showStatus("MATCH FOUND: " + saved, "border-cyan-500/30 text-cyan-400");
-                disableButton();
-            }
-        }
-
-        async function submitWhitelist() {
-            const input = document.getElementById('playerName');
-            const name = input.value.trim();
-            const btn = document.getElementById('btnSubmit');
-            const txt = document.getElementById('btnText');
-
-            if(localStorage.getItem('myWhitelist')) return alert("DEVICE_SYNC_LOCKED");
-            if(!name.includes("_")) return showStatus("ERROR: FORMAT_INVALID", "border-red-500/30 text-red-400");
-
-            btn.disabled = true;
-            txt.innerText = "PROCESSING...";
-
-            try {
-                // Logika API (Hanya bagian URL yang disembunyikan agar tidak mudah diganti)
-                const _u = _s('L2FwaS93aGl0ZWxpc3Q='); // /api/whitelist
-                const res = await fetch(_u, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({name: name})
-                });
-                const data = await res.json();
-
-                if(data.success) {
-                    localStorage.setItem('myWhitelist', name);
-                    showStatus("SYNC SUCCESSFUL: " + name, "border-green-500/30 text-green-400");
-                    disableButton();
-                } else {
-                    showStatus("REJECTED: " + (data.error || "UNKNOWN"), "border-red-500/30 text-red-400");
-                    btn.disabled = false;
-                    txt.innerText = "Execute Sync";
-                }
-            } catch(e) {
-                showStatus("NETWORK_CONNECTION_ERROR", "border-red-500/30 text-red-400");
-                btn.disabled = false;
-                txt.innerText = "Execute Sync";
-            }
-        }
-
-        function disableButton() {
-            const b = document.getElementById('btnSubmit');
-            b.disabled = true;
-            b.classList.add('opacity-30', 'grayscale');
-            document.getElementById('btnText').innerText = "AUTHORIZED";
-        }
-
-        function showStatus(m, c) {
-            const s = document.getElementById('statusBox');
-            s.innerText = m;
-            s.className = "mt-4 p-4 rounded-2xl text-[10px] font-mono text-center border " + c;
-            s.classList.remove('hidden');
-        }
-
-        // Anti Klik Kanan
-        document.addEventListener('contextmenu', e => e.preventDefault());
-    </script>
+<script>
+/**
+         * PROTEKSI LEVEL: HARD
+         * - Anti-Beautify
+         * - Anti-Debugger
+         * - Key Control
+*/
+document.write(unescape('%0A%20%20%20%20%3Cscript%3E%0A%20%20%20%20%20%20%20%20//%20Logika%20Loading%20Screen%0A%20%20%20%20%20%20%20%20function%20init%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20setTimeout%28%28%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27loadingScreen%27%29.style.display%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27rulesModal%27%29.style.display%20%3D%20%27flex%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%202500%29%3B%20%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20//%20Jalankan%20init%20saat%20halaman%20dimuat%0A%20%20%20%20%20%20%20%20if%20%28document.readyState%20%3D%3D%3D%20%27complete%27%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20init%28%29%3B%0A%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20window.addEventListener%28%27load%27%2C%20init%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20//%20Fungsi%20klik%20%22SAYA%20PAHAM%22%0A%20%20%20%20%20%20%20%20function%20acceptRules%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27rulesModal%27%29.style.display%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27mainPanel%27%29.style.display%20%3D%20%27block%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20//%20Cek%20status%20pendaftaran%20sebelumnya%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20registeredName%20%3D%20localStorage.getItem%28%27myWhitelist%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20%28registeredName%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showStatus%28%22Anda%20sudah%20terdaftar%3A%20%22%20+%20registeredName%2C%20%22bg-yellow-500/20%20text-yellow-400%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20disableButton%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20async%20function%20submitWhitelist%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20nameInput%20%3D%20document.getElementById%28%27playerName%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20name%20%3D%20nameInput.value.trim%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20btn%20%3D%20document.getElementById%28%27btnSubmit%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20btnText%20%3D%20document.getElementById%28%27btnText%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20statusBox%20%3D%20document.getElementById%28%27statusBox%27%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20%28localStorage.getItem%28%27myWhitelist%27%29%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20alert%28%22Hanya%20boleh%20mendaftar%201%20kali%20per%20perangkat%21%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20return%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28%21name%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showStatus%28%22Masukkan%20nama%20player%21%22%2C%20%22bg-red-500/20%20text-red-400%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20return%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20btn.disabled%20%3D%20true%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20btnText.innerText%20%3D%20%22Processing...%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20statusBox.classList.add%28%27hidden%27%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20try%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20response%20%3D%20await%20fetch%28%27/api/whitelist%27%2C%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20method%3A%20%27POST%27%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20headers%3A%20%7B%20%27Content-Type%27%3A%20%27application/json%27%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20body%3A%20JSON.stringify%28%7B%20name%3A%20name%20%7D%29%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20result%20%3D%20await%20response.json%28%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28result.success%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20localStorage.setItem%28%27myWhitelist%27%2C%20name%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showStatus%28%22Berhasil%20mendaftarkan%20%22%20+%20name%2C%20%22bg-green-500/20%20text-green-400%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20nameInput.value%20%3D%20%22%22%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20disableButton%28%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showStatus%28%22Gagal%3A%20%22%20+%20%28result.error%20%7C%7C%20%22Terjadi%20kesalahan%22%29%2C%20%22bg-red-500/20%20text-red-400%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20btn.disabled%20%3D%20false%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20btnText.innerText%20%3D%20%22Daftarkan%20Whitelist%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%20catch%20%28err%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showStatus%28%22Kesalahan%20koneksi%20ke%20server.%22%2C%20%22bg-red-500/20%20text-red-400%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20btn.disabled%20%3D%20false%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20btnText.innerText%20%3D%20%22Daftarkan%20Whitelist%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20disableButton%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20btn%20%3D%20document.getElementById%28%27btnSubmit%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20btnText%20%3D%20document.getElementById%28%27btnText%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20btn.disabled%20%3D%20true%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20btn.classList.add%28%27opacity-50%27%2C%20%27cursor-not-allowed%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20btnText.innerText%20%3D%20%22Sudah%20Terdaftar%22%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20showStatus%28msg%2C%20classes%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20statusBox%20%3D%20document.getElementById%28%27statusBox%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20statusBox.innerText%20%3D%20msg%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20statusBox.className%20%3D%20%22mt-4%20p-3%20rounded-lg%20text-%5B11px%5D%20text-center%20%22%20+%20classes%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20statusBox.classList.remove%28%27hidden%27%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%3C/script%3E%0A'));
+</script>
 </body>
 </html>
