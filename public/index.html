@@ -9,160 +9,210 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap');
         
-        body { background-color: #020617; color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; }
-        .glass-card { background: #111827; border: 1px solid #1e293b; position: relative; }
-        .page-node { display: none; }
-        .page-node.active { display: block; animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        body { 
+            background-color: #020617; 
+            color: #f8fafc; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            overflow: hidden; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
 
-        /* Navigasi Full Style */
-        .nav-link { @apply flex-1 flex flex-col items-center justify-center gap-1 h-16 transition-all border-b-2 border-transparent; }
-        .nav-link i { @apply text-lg text-slate-500; }
-        .nav-link span { @apply text-[8px] font-black uppercase tracking-tighter text-slate-500; }
-        .nav-link.active { @apply border-cyan-500 bg-slate-900/50; }
-        .nav-link.active i { @apply text-cyan-500; }
-        .nav-link.active span { @apply text-cyan-500; }
+        .main-container {
+            background: #111827;
+            border: 1px solid #1e293b;
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 2.5rem;
+            min-height: 580px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+        }
 
-        /* API Loading Overlay */
-        #apiLoader { display: none; position: absolute; inset: 0; background: rgba(2, 6, 23, 0.95); z-index: 50; flex-direction: column; align-items: center; justify-content: center; border-radius: 2rem; }
+        /* LOADING API OVERLAY */
+        #apiLoader { 
+            display: none; 
+            position: absolute; 
+            inset: 0; 
+            background: rgba(2, 6, 23, 0.98); 
+            z-index: 100; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
         #apiLoader.active { display: flex; }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(6, 182, 212, 0.1);
+            border-top: 4px solid #06b6d4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* PAGE SYSTEM */
+        .page-node { display: none; }
+        .page-node.active { display: block; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* NAVIGATION ICON ONLY */
+        .nav-link { 
+            @apply flex-1 flex items-center justify-center h-16 transition-all duration-300; 
+        }
+        .nav-link i { @apply text-xl text-slate-600; }
+        .nav-link.active i { @apply text-cyan-500 scale-125; filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.5)); }
+        .nav-link.active { @apply relative; }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 12px;
+            width: 4px;
+            height: 4px;
+            background: #06b6d4;
+            border-radius: 50%;
+        }
+
+        /* CUSTOM INPUT */
+        input:focus { border-color: #06b6d4; }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
+<body>
 
-    <div id="mainWrapper" class="max-w-md w-full">
-        <div class="glass-card rounded-[2rem] overflow-hidden flex flex-col min-h-[550px] shadow-2xl">
+    <div id="bootScreen" class="fixed inset-0 bg-[#020617] z-[200] flex flex-col items-center justify-center">
+        <i class="fas fa-microchip text-cyan-500 text-4xl animate-pulse mb-6"></i>
+        <div class="w-32 h-1 bg-slate-900 rounded-full overflow-hidden">
+            <div class="h-full bg-cyan-500 animate-[loading_1.5s_ease-in-out_infinite]"></div>
+        </div>
+        <style>@keyframes loading { 0% { width: 0%; } 50% { width: 100%; } 100% { width: 0%; } }</style>
+    </div>
+
+    <div id="mainWrapper" class="main-container">
+        
+        <div id="apiLoader">
+            <div class="spinner mb-6"></div>
+            <p class="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-500">Connecting API</p>
+            <p class="text-[8px] text-slate-600 font-mono mt-2">VERIFYING_CLIENT_DATA...</p>
+        </div>
+
+        <div class="px-8 pt-8 flex justify-between items-start">
+            <div>
+                <p class="text-[10px] font-black text-cyan-500 uppercase tracking-widest mb-1">Local Identity</p>
+                <h1 class="text-2xl font-black tracking-tighter italic">MILLANIUM<span class="text-slate-600">.</span></h1>
+            </div>
+            <div class="text-right">
+                <div id="clock" class="text-xs font-mono font-bold text-slate-400">00:00:00</div>
+                <div class="text-[8px] font-black text-slate-700 uppercase tracking-tighter">Status: Active</div>
+            </div>
+        </div>
+
+        <div class="flex-1 px-8 py-8 overflow-y-auto">
             
-            <div id="apiLoader">
-                <div class="w-12 h-12 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin mb-4"></div>
-                <p class="text-[10px] font-black uppercase tracking-[0.3em] text-cyan-500">Processing Data</p>
-                <p class="text-[8px] text-slate-500 font-mono mt-2 uppercase">Syncing to Master Database...</p>
+            <div id="page-home" class="page-node active">
+                <div class="space-y-4">
+                    <div class="bg-slate-900/50 p-5 rounded-3xl border border-white/5 flex gap-4">
+                        <i class="fas fa-satellite-dish text-cyan-500 text-lg"></i>
+                        <div>
+                            <h4 class="text-[11px] font-black uppercase tracking-wide">Main Server Info</h4>
+                            <p class="text-[10px] text-slate-500 leading-relaxed mt-1">Server Millanium berjalan pada port 30120 dengan optimasi sinkronisasi data 1:1.</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/50 p-5 rounded-3xl border border-white/5 flex gap-4">
+                        <i class="fas fa-user-shield text-emerald-500 text-lg"></i>
+                        <div>
+                            <h4 class="text-[11px] font-black uppercase tracking-wide">Account Security</h4>
+                            <p class="text-[10px] text-slate-500 leading-relaxed mt-1">Setiap akun terikat pada HWID perangkat anda. Dilarang berbagi akun dengan orang lain.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="px-6 pt-6 flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Network Secure</span>
+            <div id="page-whitelist" class="page-node">
+                <div class="text-center mb-8">
+                    <h2 class="text-sm font-black uppercase tracking-[0.3em]">Identification</h2>
+                    <p class="text-[9px] text-slate-500 mt-2 italic uppercase">Daftarkan Nama Karakter Anda</p>
                 </div>
-                <div class="text-[9px] font-mono text-slate-500" id="liveTime">00:00:00</div>
+
+                <div class="max-w-[300px] mx-auto space-y-5">
+                    <div class="relative">
+                        <i class="fas fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-slate-700"></i>
+                        <input type="text" id="playerName" 
+                            class="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 pl-12 pr-4 text-xs font-bold outline-none transition-all focus:border-cyan-500" 
+                            placeholder="Nama_Belakang"
+                            oninput="autoFix(this)">
+                    </div>
+
+                    <div class="bg-blue-500/5 border border-blue-500/10 p-4 rounded-2xl">
+                        <p class="text-[9px] text-slate-500 font-bold leading-relaxed">
+                            <i class="fas fa-keyboard mr-1"></i> Sistem akan otomatis mengoreksi huruf kapital. Pastikan menggunakan underscore (_).
+                        </p>
+                    </div>
+
+                    <button id="btnSubmit" onclick="submitWhitelist()" class="w-full bg-white text-slate-950 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all active:scale-95 shadow-xl">
+                        Submit Identification
+                    </button>
+                </div>
             </div>
 
-            <div class="flex-1 px-6 py-6 overflow-y-auto">
-                
-                <div id="page-home" class="page-node active">
-                    <h1 class="text-2xl font-black mb-1 italic">DASHBOARD<span class="text-cyan-500">.</span></h1>
-                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-6 border-b border-slate-800 pb-2">Main System Control</p>
-                    
-                    <div class="space-y-4">
-                        <div class="bg-slate-900/50 p-4 rounded-2xl border border-white/5 flex gap-4">
-                            <i class="fas fa-microchip text-cyan-500 text-xl mt-1"></i>
-                            <div>
-                                <h4 class="text-xs font-black uppercase">Server Specification</h4>
-                                <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Hardware Acceleration On. 128-Tick rate enabled for ultra-smooth gameplay experience.</p>
-                            </div>
-                        </div>
-                        <div class="bg-slate-900/50 p-4 rounded-2xl border border-white/5 flex gap-4">
-                            <i class="fas fa-shield-check text-green-500 text-xl mt-1"></i>
-                            <div>
-                                <h4 class="text-xs font-black uppercase">Anti-Cheat System</h4>
-                                <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Sistem proteksi HWID aktif. Setiap percobaan kecurangan akan langsung tercatat secara permanen.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="page-whitelist" class="page-node">
-                    <h1 class="text-2xl font-black mb-1">REGISTER<span class="text-cyan-500">.</span></h1>
-                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-6 border-b border-slate-800 pb-2">Identification Entry</p>
-                    
-                    <div class="space-y-5">
-                        <div class="bg-blue-500/5 border border-blue-500/20 p-4 rounded-xl">
-                            <h5 class="text-[10px] font-black text-blue-400 uppercase flex items-center gap-2 mb-1">
-                                <i class="fas fa-info-circle"></i> Penting:
-                            </h5>
-                            <p class="text-[10px] text-slate-400 font-medium">Gunakan format <span class="text-white font-bold">Nama_Belakang</span>. Sistem akan menolak jika tidak menggunakan underscore (_).</p>
-                        </div>
-
-                        <div class="space-y-3">
-                            <label class="text-[9px] font-black text-slate-500 uppercase ml-2 tracking-widest">Citizen Name</label>
-                            <div class="bg-slate-950 border border-slate-800 rounded-xl flex items-center px-4 focus-within:border-cyan-500 transition-all">
-                                <i class="fas fa-fingerprint text-slate-700 mr-3 text-sm"></i>
-                                <input type="text" id="playerName" 
-                                    class="bg-transparent w-full py-4 text-xs font-bold outline-none text-white placeholder:text-slate-800" 
-                                    placeholder="Contoh: Udin_Silaen"
-                                    oninput="fixName(this)">
-                            </div>
-                        </div>
-
-                        <button id="btnSubmit" onclick="submitWhitelist()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white py-4 rounded-xl font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg shadow-cyan-900/20">
-                            <i class="fas fa-paper-plane"></i> Submit Registration
-                        </button>
-                    </div>
-                </div>
-
-                <div id="page-status" class="page-node">
-                    <h1 class="text-2xl font-black mb-1 italic">NET_INFO<span class="text-cyan-500">.</span></h1>
-                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-6 border-b border-slate-800 pb-2">Network & Analytics</p>
-                    
-                    <div class="grid grid-cols-2 gap-3 mb-4">
-                        <div class="bg-slate-900 p-4 rounded-2xl border border-white/5">
-                            <p class="text-[8px] font-black text-slate-500 uppercase mb-1">Region</p>
-                            <p class="text-[10px] font-bold">Indonesia (Asia)</p>
-                        </div>
-                        <div class="bg-slate-900 p-4 rounded-2xl border border-white/5">
-                            <p class="text-[8px] font-black text-slate-500 uppercase mb-1">Uptime</p>
-                            <p class="text-[10px] font-bold">99.9% Online</p>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-slate-900 p-5 rounded-2xl border border-white/5">
-                        <div class="flex justify-between items-end mb-3">
-                            <span class="text-[10px] font-black uppercase">Citizen Occupancy</span>
-                            <span class="text-[10px] font-mono text-cyan-500">24/100</span>
+            <div id="page-status" class="page-node">
+                <div class="space-y-4">
+                    <div class="bg-slate-900/80 p-5 rounded-3xl border border-white/5">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">Live Citizens</span>
+                            <span class="text-xs font-mono font-bold text-cyan-500">24 / 100</span>
                         </div>
                         <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
                             <div class="bg-cyan-500 h-full w-[24%]"></div>
                         </div>
                     </div>
-                </div>
-
-                <div id="page-admin" class="page-node">
-                    <div class="bg-red-500/5 border border-red-500/10 p-8 rounded-[2rem] text-center">
-                        <i class="fas fa-user-shield text-3xl text-red-500 mb-4"></i>
-                        <h2 class="text-sm font-black uppercase mb-2">Restricted Area</h2>
-                        <p class="text-[10px] text-slate-500 leading-relaxed italic">Console admin hanya dapat diakses oleh staff resmi. Masukkan PIN keamanan untuk melanjutkan.</p>
-                        <button onclick="adminCheck()" class="mt-6 w-full bg-slate-800 py-3 rounded-xl text-[10px] font-black uppercase">Open Identity Auth</button>
+                    <div class="grid grid-cols-2 gap-3 text-center">
+                        <div class="bg-slate-900/50 p-4 rounded-2xl border border-white/5">
+                            <p class="text-[8px] font-black text-slate-600 uppercase">Region</p>
+                            <p class="text-[10px] font-bold">Indonesia</p>
+                        </div>
+                        <div class="bg-slate-900/50 p-4 rounded-2xl border border-white/5">
+                            <p class="text-[8px] font-black text-slate-600 uppercase">Latency</p>
+                            <p class="text-[10px] font-bold text-green-500">Stable</p>
+                        </div>
                     </div>
                 </div>
-
-                <div id="statusBox" class="mt-6 hidden p-4 rounded-xl text-[10px] font-black flex items-center gap-3"></div>
             </div>
 
-            <div class="bg-slate-950/50 border-t border-slate-800 flex">
-                <button onclick="goto('home')" id="nav-home" class="nav-link active">
-                    <i class="fas fa-th-large"></i><span>Home</span>
-                </button>
-                <button onclick="goto('whitelist')" id="nav-whitelist" class="nav-link">
-                    <i class="fas fa-id-badge"></i><span>Register</span>
-                </button>
-                <button onclick="goto('status')" id="nav-status" class="nav-link">
-                    <i class="fas fa-signal"></i><span>Status</span>
-                </button>
-                <button onclick="goto('admin')" id="nav-admin" class="nav-link">
-                    <i class="fas fa-fingerprint"></i><span>Admin</span>
-                </button>
+            <div id="page-admin" class="page-node">
+                <div class="bg-red-500/5 border border-red-500/10 p-10 rounded-[2.5rem] text-center">
+                    <i class="fas fa-fingerprint text-3xl text-red-600 mb-6"></i>
+                    <h2 class="text-xs font-black uppercase tracking-widest mb-2">Unauthorized</h2>
+                    <p class="text-[10px] text-slate-600 leading-relaxed italic uppercase">Akses khusus pengurus kota Millanium. Masukkan PIN Master.</p>
+                    <button onclick="adminCheck()" class="mt-8 w-full bg-slate-800 py-3.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-700 transition-all">Authenticate</button>
+                </div>
             </div>
+
+            <div id="statusBox" class="mt-6 hidden p-4 rounded-2xl text-[10px] font-black flex items-center gap-3"></div>
         </div>
-        <p class="text-center text-[8px] text-slate-700 mt-6 font-mono uppercase tracking-[0.4em]">Millanium_System_OS_v1.0.2</p>
+
+        <div class="bg-[#0b1120] border-t border-slate-800/50 flex px-4">
+            <button onclick="goto('home')" id="nav-home" class="nav-link active"><i class="fas fa-house-user"></i></button>
+            <button onclick="goto('whitelist')" id="nav-whitelist" class="nav-link"><i class="fas fa-id-card-clip"></i></button>
+            <button onclick="goto('status')" id="nav-status" class="nav-link"><i class="fas fa-chart-bar"></i></button>
+            <button onclick="goto('admin')" id="nav-admin" class="nav-link"><i class="fas fa-shield-halved"></i></button>
+        </div>
     </div>
 
-    <div id="adminPinModal" class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-950/95 hidden backdrop-blur-md">
-        <div class="bg-slate-900 border border-white/10 w-full max-w-xs rounded-3xl p-8 text-center shadow-2xl">
-            <h2 class="text-[11px] font-black tracking-widest mb-6 uppercase">Master Access</h2>
-            <input type="password" id="adminPinInput" maxlength="4" class="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl text-center text-3xl font-black tracking-[0.5em] mb-4 outline-none focus:border-red-500 transition-all">
-            <div class="flex gap-2">
-                <button onclick="closeAdminPin()" class="flex-1 py-3 text-[10px] font-black uppercase text-slate-600">Cancel</button>
-                <button onclick="verifyAdminPin()" class="flex-1 bg-red-600 py-3 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-red-900/20">Auth</button>
+    <div id="adminPinModal" class="fixed inset-0 z-[300] bg-black/95 backdrop-blur-md hidden flex flex-col items-center justify-center p-6">
+        <div class="w-full max-w-xs text-center">
+            <h2 class="text-xs font-black uppercase tracking-[0.5em] mb-10 text-slate-500">Secure Access</h2>
+            <input type="password" id="adminPinInput" maxlength="4" class="w-full bg-slate-900 border border-slate-700 p-5 rounded-2xl text-center text-3xl font-black tracking-[0.6em] mb-8 outline-none text-white focus:border-red-600 transition-all">
+            <div class="flex gap-4">
+                <button onclick="closeAdminPin()" class="flex-1 py-3 text-[10px] font-black uppercase text-slate-600">Close</button>
+                <button onclick="verifyAdminPin()" class="flex-1 bg-red-600 py-3 rounded-xl text-[10px] font-black uppercase">Verify</button>
             </div>
         </div>
     </div>
@@ -170,13 +220,22 @@
     <script>
         const _id = (e) => document.getElementById(e);
 
-        // CLOCK SYSTEM
+        // INITIAL BOOT
+        window.onload = () => {
+            setTimeout(() => {
+                _id('bootScreen').style.opacity = '0';
+                setTimeout(() => _id('bootScreen').style.display = 'none', 500);
+                checkAlready();
+            }, 1500);
+        };
+
+        // CLOCK
         setInterval(() => {
-            _id('liveTime').innerText = new Date().toLocaleTimeString('en-GB');
+            _id('clock').innerText = new Date().toLocaleTimeString('en-GB');
         }, 1000);
 
-        // AUTO NAME FORMATTER (Nama_Belakang)
-        function fixName(input) {
+        // AUTO FIX NAME (Nama_Belakang)
+        function autoFix(input) {
             let val = input.value.replace(/\s/g, "_");
             if (val.includes("_")) {
                 let parts = val.split("_");
@@ -195,27 +254,27 @@
             _id('statusBox').classList.add('hidden');
         }
 
-        // ADMIN LOGIC
+        // ADMIN ACCESS
         function adminCheck() { _id('adminPinModal').classList.remove('hidden'); _id('adminPinInput').focus(); }
         function closeAdminPin() { _id('adminPinModal').classList.add('hidden'); _id('adminPinInput').value = ''; }
         function verifyAdminPin() {
-            if(_id('adminPinInput').value === "2025") { closeAdminPin(); alert("ACCESS GRANTED"); } 
-            else { alert("INVALID PIN"); _id('adminPinInput').value = ''; }
+            if(_id('adminPinInput').value === "2025") { closeAdminPin(); alert("ACCESS GRANTED"); }
+            else { alert("PIN SALAH!"); _id('adminPinInput').value = ''; }
         }
 
         // REGISTER API LOGIC
         async function submitWhitelist() {
             const name = _id('playerName').value.trim();
             if (localStorage.getItem('myWhitelist')) return;
-            if(!name || !name.includes("_")) {
-                showStatus("ERROR", "Invalid Format. Gunakan Nama_Belakang", "bg-red-500/10 text-red-500 border border-red-500/20");
+            if(!name || !name.includes("_") || name.length < 5) {
+                showStatus("FAILED", "Gunakan format Nama_Belakang!", "bg-red-500/10 text-red-500 border border-red-500/20");
                 return;
             }
 
+            // AKTIFKAN LOADING API
             _id('apiLoader').classList.add('active');
             
             try {
-                // KIRIM DATA KE BACKEND
                 const response = await fetch('save.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -223,43 +282,42 @@
                 });
                 
                 const result = await response.text();
-                // Simulasi delay cek biar mantap
+                // Delay simulasi biar user tau ada proses
                 await new Promise(r => setTimeout(r, 2000));
 
                 if(result.trim() === "success") {
                     localStorage.setItem('myWhitelist', name);
-                    showStatus("SUCCESS", "Identitas berhasil diverifikasi server!", "bg-green-500/10 text-green-400 border border-green-500/20");
-                    disableButton();
+                    showStatus("SUCCESS", "Data berhasil masuk ke Whitelist!", "bg-green-500/10 text-green-400 border border-green-500/20");
+                    disableBtn();
                 } else {
-                    showStatus("FAILED", "Server menolak permintaan.", "bg-red-500/10 text-red-500 border border-red-500/20");
+                    showStatus("REJECTED", "Database menolak permintaan.", "bg-red-500/10 text-red-500 border border-red-500/20");
                 }
             } catch (err) {
-                showStatus("OFFLINE", "Gagal menghubungi API Master.", "bg-red-500/10 text-red-500 border border-red-500/20");
+                showStatus("OFFLINE", "Gagal menghubungi server API.", "bg-red-500/10 text-red-500 border border-red-500/20");
             } finally {
                 _id('apiLoader').classList.remove('active');
             }
         }
 
-        function disableButton() {
-            const btn = _id('btnSubmit');
-            btn.disabled = true;
-            btn.style.opacity = "0.3";
-            btn.innerHTML = `<i class="fas fa-check-circle"></i> Identity_Secured`;
+        function checkAlready() {
+            const s = localStorage.getItem('myWhitelist');
+            if(s) {
+                showStatus("READY", "Terdaftar: " + s, "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20");
+                disableBtn();
+            }
+        }
+
+        function disableBtn() {
+            _id('btnSubmit').disabled = true;
+            _id('btnSubmit').style.opacity = "0.3";
+            _id('btnSubmit').innerText = "REGISTERED";
         }
 
         function showStatus(type, msg, classes) {
             const s = _id('statusBox');
-            s.innerHTML = `<i class="fas fa-shield-alt"></i> <span>[${type}] ${msg}</span>`;
-            s.className = "mt-6 p-4 rounded-xl text-[10px] font-black flex items-center gap-3 " + classes;
+            s.innerHTML = `<i class="fas fa-check-circle"></i> <span>[${type}] ${msg}</span>`;
+            s.className = "mt-6 p-4 rounded-2xl text-[10px] font-black flex items-center gap-3 " + classes;
             s.classList.remove('hidden');
-        }
-
-        window.onload = () => {
-            const saved = localStorage.getItem('myWhitelist');
-            if(saved) {
-                showStatus("ACTIVE", "Citizen Terdaftar: " + saved, "bg-cyan-500/10 text-cyan-500 border border-cyan-500/20");
-                disableButton();
-            }
         }
     </script>
 </body>
