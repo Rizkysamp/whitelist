@@ -141,136 +141,14 @@
         </div>
     </div>
 
-    <script>
-        const _id = (e) => document.getElementById(e);
-
-        // INITIAL LOAD SYSTEM
-        window.onload = () => {
-            setTimeout(() => {
-                _id('loadingScreen').style.opacity = '0';
-                setTimeout(() => { 
-                    _id('loadingScreen').style.display = 'none'; 
-                    _id('rulesModal').style.display = 'flex'; 
-                }, 500);
-            }, 2000);
-        };
-
-        function acceptRules() {
-            _id('rulesModal').style.display = 'none';
-            _id('mainWrapper').style.display = 'block';
-            
-            const saved = localStorage.getItem('myWhitelist');
-            if(saved) {
-                showStatus("YOU ARE REGISTERED: " + saved, "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20");
-                disableButton();
-            }
-        }
-
-    function goto(page) {
-        document.querySelectorAll('.page-node').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-        _id('page-' + page).classList.add('active');
-        _id('nav-' + page).classList.add('active');
-        _id('statusBox').classList.add('hidden');
-        
-        // TAMBAHKAN INI: Jika klik menu server, jalankan fungsi updateStatus
-        if (page === 'server') {
-            updateStatus();
-        }
-    }
-// Fungsi buat narik data dari API status.js yang baru lu buat
-    async function updateStatus() {
-        try {
-            const response = await fetch('/api/status');
-            const data = await response.json();
-    
-            if (data.success) {
-                // 1. Cari elemen angka "24 / 100" lalu ganti
-                const display = document.querySelector('#page-server span:last-child');
-                if (display) {
-                    display.innerText = `${data.online} / ${data.max}`;
-                }
-    
-                // 2. Cari bar biru lalu sesuaikan panjangnya
-                const bar = document.querySelector('#page-server .bg-cyan-500');
-                if (bar) {
-                    const percent = (data.online / data.max) * 100;
-                    bar.style.width = percent + '%';
-                }
-            }
-        } catch (err) {
-            console.error("Gagal update status player online");
-        }
-    }
-        // ADMIN LOGIC
-        function adminCheck() { _id('adminPinModal').classList.remove('hidden'); _id('adminPinInput').focus(); }
-        function closeAdminPin() { _id('adminPinModal').classList.add('hidden'); _id('adminPinInput').value = ''; }
-        function verifyAdminPin() {
-            if(_id('adminPinInput').value === "2025") { closeAdminPin(); goto('admin'); } 
-            else { alert("ACCESS DENIED"); _id('adminPinInput').value = ''; }
-        }
-
-        async function submitWhitelist() {
-            const nameInput = document.getElementById('playerName');
-            const name = nameInput.value.trim();
-            const btn = document.getElementById('btnSubmit');
-            const btnText = document.getElementById('btnText');
-            const statusBox = document.getElementById('statusBox');
-
-            if (localStorage.getItem('myWhitelist')) {
-                alert("Hanya boleh mendaftar 1 kali per perangkat!");
-                return;
-            }
-
-            if(!name) {
-                showStatus("Masukkan nama player!", "bg-red-500/20 text-red-400");
-                return;
-            }
-
-            btn.disabled = true;
-            btnText.innerText = "Processing...";
-            statusBox.classList.add('hidden');
-
-            try {
-                const response = await fetch('/api/whitelist', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: name })
-                });
-
-                const result = await response.json();
-
-                if(result.success) {
-                    localStorage.setItem('myWhitelist', name);
-                    showStatus("Berhasil mendaftarkan " + name, "bg-green-500/20 text-green-400");
-                    nameInput.value = ""; 
-                    disableButton(); 
-                } else {
-                    showStatus("Gagal: " + (result.error || "Terjadi kesalahan"), "bg-red-500/20 text-red-400");
-                    btn.disabled = false;
-                    btnText.innerText = "Daftarkan Whitelist";
-                }
-            } catch (err) {
-                showStatus("Kesalahan koneksi ke server.", "bg-red-500/20 text-red-400");
-                btn.disabled = false;
-                btnText.innerText = "Daftarkan Whitelist";
-            }
-        }
-
-        function disableButton() {
-            const btn = _id('btnSubmit');
-            const btnText = _id('btnText');
-            btn.disabled = true;
-            btn.classList.add('opacity-50', 'cursor-not-allowed');
-            btnText.innerText = "REGISTERED";
-        }
-
-        function showStatus(msg, classes) {
-            const s = _id('statusBox');
-            s.innerText = msg;
-            s.className = "mt-auto p-4 rounded-2xl text-[10px] text-center font-bold " + classes;
-            s.classList.remove('hidden');
-        }
-    </script>
+<script>
+/**
+         * PROTEKSI LEVEL: HARD
+         * - Anti-Beautify
+         * - Anti-Debugger
+         * - Key Control
+*/
+document.write(unescape('%20%20%20%20%3Cscript%3E%0A%20%20%20%20%20%20%20%20const%20_id%20%3D%20%28e%29%20%3D%3E%20document.getElementById%28e%29%3B%0A%0A%20%20%20%20%20%20%20%20//%20INITIAL%20LOAD%20SYSTEM%0A%20%20%20%20%20%20%20%20window.onload%20%3D%20%28%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20setTimeout%28%28%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20_id%28%27loadingScreen%27%29.style.opacity%20%3D%20%270%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20setTimeout%28%28%29%20%3D%3E%20%7B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20_id%28%27loadingScreen%27%29.style.display%20%3D%20%27none%27%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20_id%28%27rulesModal%27%29.style.display%20%3D%20%27flex%27%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%20500%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%202000%29%3B%0A%20%20%20%20%20%20%20%20%7D%3B%0A%0A%20%20%20%20%20%20%20%20function%20acceptRules%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20_id%28%27rulesModal%27%29.style.display%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20_id%28%27mainWrapper%27%29.style.display%20%3D%20%27block%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20saved%20%3D%20localStorage.getItem%28%27myWhitelist%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28saved%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showStatus%28%22YOU%20ARE%20REGISTERED%3A%20%22%20+%20saved%2C%20%22bg-yellow-500/10%20text-yellow-500%20border%20border-yellow-500/20%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20disableButton%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20function%20goto%28page%29%20%7B%0A%20%20%20%20%20%20%20%20document.querySelectorAll%28%27.page-node%27%29.forEach%28p%20%3D%3E%20p.classList.remove%28%27active%27%29%29%3B%0A%20%20%20%20%20%20%20%20document.querySelectorAll%28%27.nav-link%27%29.forEach%28n%20%3D%3E%20n.classList.remove%28%27active%27%29%29%3B%0A%20%20%20%20%20%20%20%20_id%28%27page-%27%20+%20page%29.classList.add%28%27active%27%29%3B%0A%20%20%20%20%20%20%20%20_id%28%27nav-%27%20+%20page%29.classList.add%28%27active%27%29%3B%0A%20%20%20%20%20%20%20%20_id%28%27statusBox%27%29.classList.add%28%27hidden%27%29%3B%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20//%20TAMBAHKAN%20INI%3A%20Jika%20klik%20menu%20server%2C%20jalankan%20fungsi%20updateStatus%0A%20%20%20%20%20%20%20%20if%20%28page%20%3D%3D%3D%20%27server%27%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20updateStatus%28%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A//%20Fungsi%20buat%20narik%20data%20dari%20API%20status.js%20yang%20baru%20lu%20buat%0A%20%20%20%20async%20function%20updateStatus%28%29%20%7B%0A%20%20%20%20%20%20%20%20try%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20response%20%3D%20await%20fetch%28%27/api/status%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20data%20%3D%20await%20response.json%28%29%3B%0A%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20%28data.success%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20//%201.%20Cari%20elemen%20angka%20%2224%20/%20100%22%20lalu%20ganti%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20display%20%3D%20document.querySelector%28%27%23page-server%20span%3Alast-child%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20%28display%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20display.innerText%20%3D%20%60%24%7Bdata.online%7D%20/%20%24%7Bdata.max%7D%60%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20//%202.%20Cari%20bar%20biru%20lalu%20sesuaikan%20panjangnya%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20bar%20%3D%20document.querySelector%28%27%23page-server%20.bg-cyan-500%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20%28bar%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20percent%20%3D%20%28data.online%20/%20data.max%29%20*%20100%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20bar.style.width%20%3D%20percent%20+%20%27%25%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%20catch%20%28err%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20console.error%28%22Gagal%20update%20status%20player%20online%22%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20//%20ADMIN%20LOGIC%0A%20%20%20%20%20%20%20%20function%20adminCheck%28%29%20%7B%20_id%28%27adminPinModal%27%29.classList.remove%28%27hidden%27%29%3B%20_id%28%27adminPinInput%27%29.focus%28%29%3B%20%7D%0A%20%20%20%20%20%20%20%20function%20closeAdminPin%28%29%20%7B%20_id%28%27adminPinModal%27%29.classList.add%28%27hidden%27%29%3B%20_id%28%27adminPinInput%27%29.value%20%3D%20%27%27%3B%20%7D%0A%20%20%20%20%20%20%20%20function%20verifyAdminPin%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28_id%28%27adminPinInput%27%29.value%20%3D%3D%3D%20%222025%22%29%20%7B%20closeAdminPin%28%29%3B%20goto%28%27admin%27%29%3B%20%7D%20%0A%20%20%20%20%20%20%20%20%20%20%20%20else%20%7B%20alert%28%22ACCESS%20DENIED%22%29%3B%20_id%28%27adminPinInput%27%29.value%20%3D%20%27%27%3B%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20async%20function%20submitWhitelist%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20nameInput%20%3D%20document.getElementById%28%27playerName%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20name%20%3D%20nameInput.value.trim%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20btn%20%3D%20document.getElementById%28%27btnSubmit%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20btnText%20%3D%20document.getElementById%28%27btnText%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20statusBox%20%3D%20document.getElementById%28%27statusBox%27%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20%28localStorage.getItem%28%27myWhitelist%27%29%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20alert%28%22Hanya%20boleh%20mendaftar%201%20kali%20per%20perangkat%21%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20return%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28%21name%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showStatus%28%22Masukkan%20nama%20player%21%22%2C%20%22bg-red-500/20%20text-red-400%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20return%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20btn.disabled%20%3D%20true%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20btnText.innerText%20%3D%20%22Processing...%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20statusBox.classList.add%28%27hidden%27%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20try%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20response%20%3D%20await%20fetch%28%27/api/whitelist%27%2C%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20method%3A%20%27POST%27%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20headers%3A%20%7B%20%27Content-Type%27%3A%20%27application/json%27%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20body%3A%20JSON.stringify%28%7B%20name%3A%20name%20%7D%29%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20result%20%3D%20await%20response.json%28%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28result.success%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20localStorage.setItem%28%27myWhitelist%27%2C%20name%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showStatus%28%22Berhasil%20mendaftarkan%20%22%20+%20name%2C%20%22bg-green-500/20%20text-green-400%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20nameInput.value%20%3D%20%22%22%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20disableButton%28%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showStatus%28%22Gagal%3A%20%22%20+%20%28result.error%20%7C%7C%20%22Terjadi%20kesalahan%22%29%2C%20%22bg-red-500/20%20text-red-400%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20btn.disabled%20%3D%20false%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20btnText.innerText%20%3D%20%22Daftarkan%20Whitelist%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%20catch%20%28err%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showStatus%28%22Kesalahan%20koneksi%20ke%20server.%22%2C%20%22bg-red-500/20%20text-red-400%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20btn.disabled%20%3D%20false%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20btnText.innerText%20%3D%20%22Daftarkan%20Whitelist%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20disableButton%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20btn%20%3D%20_id%28%27btnSubmit%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20btnText%20%3D%20_id%28%27btnText%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20btn.disabled%20%3D%20true%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20btn.classList.add%28%27opacity-50%27%2C%20%27cursor-not-allowed%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20btnText.innerText%20%3D%20%22REGISTERED%22%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20showStatus%28msg%2C%20classes%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20s%20%3D%20_id%28%27statusBox%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20s.innerText%20%3D%20msg%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20s.className%20%3D%20%22mt-auto%20p-4%20rounded-2xl%20text-%5B10px%5D%20text-center%20font-bold%20%22%20+%20classes%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20s.classList.remove%28%27hidden%27%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%3C/script%3E'));
+</script>
 </body>
 </html>
