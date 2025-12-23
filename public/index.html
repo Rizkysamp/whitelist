@@ -166,19 +166,42 @@
             }
         }
 
-        // PAGE NAVIGATION
-        function goto(page) {
-            document.querySelectorAll('.page-node').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-            _id('page-' + page).classList.add('active');
-            _id('nav-' + page).classList.add('active');
-            _id('statusBox').classList.add('hidden');
-            
-            if(page === 'whitelist' && localStorage.getItem('myWhitelist')) {
-                showStatus("REGISTERED AS: " + localStorage.getItem('myWhitelist'), "bg-yellow-500/10 text-yellow-500");
-            }
+    function goto(page) {
+        document.querySelectorAll('.page-node').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+        _id('page-' + page).classList.add('active');
+        _id('nav-' + page).classList.add('active');
+        _id('statusBox').classList.add('hidden');
+        
+        // TAMBAHKAN INI: Jika klik menu server, jalankan fungsi updateStatus
+        if (page === 'server') {
+            updateStatus();
         }
-
+    }
+// Fungsi buat narik data dari API status.js yang baru lu buat
+    async function updateStatus() {
+        try {
+            const response = await fetch('/api/status');
+            const data = await response.json();
+    
+            if (data.success) {
+                // 1. Cari elemen angka "24 / 100" lalu ganti
+                const display = document.querySelector('#page-server span:last-child');
+                if (display) {
+                    display.innerText = `${data.online} / ${data.max}`;
+                }
+    
+                // 2. Cari bar biru lalu sesuaikan panjangnya
+                const bar = document.querySelector('#page-server .bg-cyan-500');
+                if (bar) {
+                    const percent = (data.online / data.max) * 100;
+                    bar.style.width = percent + '%';
+                }
+            }
+        } catch (err) {
+            console.error("Gagal update status player online");
+        }
+    }
         // ADMIN LOGIC
         function adminCheck() { _id('adminPinModal').classList.remove('hidden'); _id('adminPinInput').focus(); }
         function closeAdminPin() { _id('adminPinModal').classList.add('hidden'); _id('adminPinInput').value = ''; }
