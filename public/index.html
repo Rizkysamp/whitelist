@@ -3,239 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Millanium Hub</title>
+    <title>Millanium Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap');
+        body { background-color: #0b1120; color: white; font-family: 'Inter', sans-serif; overflow: hidden; }
         
-        body { 
-            background-color: #020617; 
-            color: #f8fafc; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            margin: 0;
-            display: flex;
-            justify-content: center;
-        }
+        /* Loading Bar Animation */
+        .load-bar { width: 180px; height: 3px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; position: relative; overflow: hidden; }
+        .load-bar::after { content: ''; position: absolute; left: -100%; width: 100%; height: 100%; background: #06b6d4; animation: progress 2s infinite ease-in-out; }
+        @keyframes progress { 0% { left: -100%; } 100% { left: 100%; } }
 
-        /* Lebar Full Screen di HP */
-        .main-container {
-            background: #0f172a;
-            width: 100vw;
-            height: 100vh;
-            max-width: 500px; /* Batas maksimal biar gak terlalu lebar di PC */
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* API LOADING OVERLAY */
-        #apiLoader { 
-            display: none; 
-            position: absolute; 
-            inset: 0; 
-            background: rgba(2, 6, 23, 0.98); 
-            z-index: 100; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center;
-            backdrop-filter: blur(8px);
-        }
-        #apiLoader.active { display: flex; }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(6, 182, 212, 0.1);
-            border-top: 4px solid #06b6d4;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* Judul besar semua, Deskripsi lurus normal */
-        .judul-fitur { font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
-        .deskripsi { font-style: normal; font-weight: 400; }
-
+        /* Page Transition */
         .page-node { display: none; }
-        .page-node.active { display: block; animation: fadeIn 0.3s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .page-node.active { display: block; animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Navigasi Simetris */
-        .nav-link { @apply flex-1 flex flex-col items-center justify-center h-full transition-all duration-300; }
-        .nav-link i { @apply text-xl text-slate-500; }
-        .nav-link.active i { @apply text-cyan-400 scale-110; }
+        /* Navigation Icon Only */
+        .nav-link { @apply flex-1 flex flex-col items-center justify-center h-14 text-slate-600 transition-all duration-300; border:none; background:none; cursor:pointer;}
+        .nav-link i { @apply text-xl; }
+        .nav-link.active { @apply text-cyan-500 scale-125; filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.6)); }
+
+        #rulesModal, #mainWrapper { display: none; }
     </style>
 </head>
-<body>
+<body class="flex items-center justify-center min-h-screen p-4">
 
-    <div id="mainWrapper" class="main-container">
+    <div id="loadingScreen" class="fixed inset-0 bg-[#0b1120] z-50 flex flex-col items-center justify-center transition-opacity duration-500">
+        <i class="fas fa-microchip text-4xl text-cyan-500 mb-6 animate-pulse"></i>
+        <div class="load-bar mb-4"></div>
+        <p class="text-cyan-500 font-bold tracking-[0.4em] text-[9px] uppercase">Connecting Millanium</p>
+    </div>
+
+    <div id="rulesModal" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-[2.5rem] p-10 shadow-2xl text-center">
+            <h2 class="text-xl font-black uppercase mb-6 tracking-widest border-b border-slate-700 pb-4">Protocol</h2>
+            <div class="space-y-4 text-sm text-slate-400 mb-10 text-left">
+                <div class="flex gap-3"><i class="fas fa-check text-cyan-500 mt-1"></i><p>Respect All Players & Staff.</p></div>
+                <div class="flex gap-3"><i class="fas fa-check text-cyan-500 mt-1"></i><p>Realistic Roleplay Only.</p></div>
+            </div>
+            <button onclick="acceptRules()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-4 rounded-2xl font-black uppercase text-xs tracking-widest text-white transition-all shadow-lg">I AGREE</button>
+        </div>
+    </div>
+
+    <div id="adminPinModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl hidden">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-[2.5rem] p-10 shadow-2xl text-center">
+            <h2 class="text-xl font-black uppercase mb-8 tracking-widest">Admin Access</h2>
+            <input type="password" id="adminPinInput" maxlength="4" class="w-full bg-slate-900 border border-slate-700 p-5 rounded-2xl text-center text-2xl font-black tracking-[1em] text-white outline-none focus:border-red-500 transition-all mb-6" placeholder="****">
+            <div class="flex gap-3">
+                <button onclick="closeAdminPin()" class="flex-1 bg-slate-700 py-4 rounded-2xl font-black uppercase text-[10px] text-white">Back</button>
+                <button onclick="verifyAdminPin()" class="flex-1 bg-red-600 py-4 rounded-2xl font-black uppercase text-[10px] text-white">Verify</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mainWrapper" class="max-w-md w-full">
         
-        <div id="apiLoader">
-            <div class="spinner mb-4"></div>
-            <p class="judul-fitur text-[10px] text-cyan-500">Checking API Whitelist</p>
-        </div>
-
-        <div class="px-8 pt-10 flex justify-between items-start shrink-0">
-            <div>
-                <p class="judul-fitur text-[10px] text-cyan-500 mb-1">Local Network</p>
-                <h1 class="text-3xl font-black italic tracking-tighter uppercase">MILLANIUM</h1>
-            </div>
-            <div class="text-right">
-                <div id="clock" class="text-sm font-mono font-bold text-slate-300">00:00:00</div>
-                <div class="judul-fitur text-[8px] text-slate-600">Ver 1.0.2</div>
-            </div>
-        </div>
-
-        <div class="flex-1 px-8 py-10 overflow-y-auto">
+        <div id="contentPanel" class="bg-slate-800 rounded-[2.5rem] p-8 shadow-2xl border border-slate-700 min-h-[480px] flex flex-col transition-all duration-300">
             
             <div id="page-home" class="page-node active">
-                <div class="space-y-6">
-                    <div class="bg-slate-900/40 p-6 rounded-[2rem] border border-white/5">
-                        <h4 class="judul-fitur text-xs mb-2">Cloud System</h4>
-                        <p class="deskripsi text-xs text-slate-400 leading-relaxed">Sistem sinkronisasi otomatis untuk menjamin keamanan data karakter anda secara real-time.</p>
+                <div class="flex justify-between items-center mb-10">
+                    <div>
+                        <h1 class="text-xl font-black uppercase tracking-tight">Welcome,</h1>
+                        <p class="text-cyan-500 text-[10px] font-bold uppercase tracking-widest mt-1">Millanium Citizen</p>
                     </div>
-                    <div class="bg-slate-900/40 p-6 rounded-[2rem] border border-white/5">
-                        <h4 class="judul-fitur text-xs mb-2">Security Auth</h4>
-                        <p class="deskripsi text-xs text-slate-400 leading-relaxed">Validasi HWID aktif. Satu perangkat hanya diperbolehkan memiliki satu identitas unik.</p>
+                    <div class="w-12 h-12 rounded-full bg-slate-700 border border-cyan-500/30 flex items-center justify-center">
+                        <i class="fas fa-user text-cyan-500"></i>
                     </div>
+                </div>
+                <div class="bg-slate-900/50 p-6 rounded-3xl border border-white/5">
+                    <p class="text-[9px] font-bold text-cyan-500 uppercase mb-3">Announcement</p>
+                    <p class="text-xs text-slate-300 italic">"Gunakan pendaftaran otomatis untuk masuk ke kota. Pastikan format Nama_Belakang benar."</p>
                 </div>
             </div>
 
-            <div id="page-whitelist" class="page-node text-center">
-                <h2 class="judul-fitur text-sm mb-8">Identification</h2>
-                <div class="space-y-4 max-w-[320px] mx-auto">
-                    <input type="text" id="playerName" 
-                        class="w-full bg-slate-950 border border-slate-800 rounded-xl py-4 px-6 text-xs font-bold outline-none focus:border-cyan-500 text-white" 
-                        placeholder="Nama_Belakang"
-                        oninput="formatNama(this)">
-                    <p class="deskripsi text-[10px] text-slate-500 uppercase font-bold">Format: <span id="preview" class="text-cyan-500">Nama_Belakang</span></p>
-                    <button id="btnSubmit" onclick="submitWhitelist()" class="w-full bg-slate-800 hover:bg-white hover:text-slate-950 py-4 rounded-xl judul-fitur text-[11px] transition-all">
-                        Register Now
+            <div id="page-whitelist" class="page-node">
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="bg-cyan-500 w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-cyan-500/20">
+                        <i class="fas fa-id-badge text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-black uppercase leading-none">Registration</h1>
+                        <p class="text-[9px] text-slate-500 font-bold uppercase mt-1">Automated Whitelist</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <input type="text" id="playerName" class="w-full px-5 py-4 bg-slate-900 border border-slate-700 rounded-2xl outline-none text-sm font-semibold text-white focus:ring-2 focus:ring-cyan-500 transition-all" placeholder="Nama_Belakang">
+                    <button id="btnSubmit" onclick="submitWhitelist()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-4 rounded-2xl font-black uppercase text-xs tracking-widest text-white shadow-lg transition-all">
+                        <span id="btnText">Daftar Whitelist</span>
                     </button>
                 </div>
+
+                <div class="mt-8 p-5 bg-slate-900/50 rounded-2xl border border-white/5 space-y-3">
+                    <div class="flex items-center gap-3 text-[10px] text-slate-400 font-bold uppercase">
+                        <i class="fas fa-info-circle text-cyan-400"></i>
+                        <p>Format: <span class="text-white">Nama_Belakang</span></p>
+                    </div>
+                    <div class="flex items-center gap-3 text-[10px] text-slate-400 font-bold uppercase">
+                        <i class="fas fa-check-circle text-cyan-400"></i>
+                        <p>1 Akun / Perangkat</p>
+                    </div>
+                </div>
             </div>
 
-            <div id="page-status" class="page-node">
-                <div class="bg-slate-900/40 p-8 rounded-[2rem] border border-white/5 text-center">
-                    <h2 class="judul-fitur text-xs mb-4 text-slate-500">Live Traffic</h2>
-                    <p class="text-4xl font-black text-cyan-500 font-mono">24/100</p>
-                    <div class="w-full bg-slate-800 h-1.5 mt-6 rounded-full overflow-hidden">
+            <div id="page-server" class="page-node">
+                <h1 class="text-lg font-black uppercase mb-6">Server Status</h1>
+                <div class="bg-slate-900/50 p-6 rounded-3xl border border-white/5">
+                    <div class="flex justify-between items-end mb-3 text-[10px] font-black uppercase">
+                        <span class="text-slate-500">Citizens Online</span>
+                        <span>24 / 100</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
                         <div class="bg-cyan-500 h-full w-[24%]"></div>
                     </div>
                 </div>
             </div>
 
             <div id="page-admin" class="page-node">
-                <div class="bg-red-950/10 border border-red-900/20 p-10 rounded-[2.5rem] text-center">
-                    <i class="fas fa-shield-halved text-4xl text-red-600 mb-6"></i>
-                    <h2 class="judul-fitur text-sm mb-3">Restricted Area</h2>
-                    <p class="deskripsi text-[10px] text-slate-500 uppercase leading-relaxed mb-8">Identity verification required. Staff members only.</p>
-                    <button onclick="adminCheck()" class="w-full bg-slate-800 py-4 rounded-xl judul-fitur text-[11px]">Verify PIN</button>
+                <h1 class="text-lg font-black uppercase mb-6 text-red-500">Admin Panel</h1>
+                <div class="space-y-3">
+                    <button class="w-full bg-slate-900 border border-slate-700 p-4 rounded-2xl text-[10px] font-black uppercase text-slate-400 text-left">Database Citizen</button>
+                    <button class="w-full bg-slate-900 border border-slate-700 p-4 rounded-2xl text-[10px] font-black uppercase text-slate-400 text-left">Server Activity</button>
                 </div>
             </div>
 
-            <div id="statusBox" class="mt-6 hidden p-4 rounded-xl judul-fitur text-[10px] text-center"></div>
+            <div id="statusBox" class="mt-auto hidden p-4 rounded-2xl text-[10px] text-center font-bold"></div>
+            
+            <p class="text-center text-slate-700 text-[8px] mt-6 uppercase tracking-[0.4em] font-black italic">Millanium RP © 2025</p>
         </div>
 
-        <div class="bg-[#020617] border-t border-slate-900 flex justify-around items-center h-20 shrink-0">
-            <button onclick="goto('home')" id="nav-home" class="nav-link active"><i class="fas fa-shapes"></i></button>
-            <button onclick="goto('whitelist')" id="nav-whitelist" class="nav-link"><i class="fas fa-id-card"></i></button>
-            <button onclick="goto('status')" id="nav-status" class="nav-link"><i class="fas fa-chart-line"></i></button>
-            <button onclick="goto('admin')" id="nav-admin" class="nav-link"><i class="fas fa-user-secret"></i></button>
-        </div>
-    </div>
-
-    <div id="adminPinModal" class="fixed inset-0 z-[300] bg-black/95 flex items-center justify-center p-8 hidden">
-        <div class="w-full max-w-xs text-center">
-            <input type="password" id="adminPinInput" maxlength="4" class="w-full bg-slate-900 border border-slate-700 p-6 rounded-2xl text-center text-3xl font-black mb-8 outline-none text-white">
-            <div class="flex gap-4">
-                <button onclick="closeAdminPin()" class="flex-1 judul-fitur text-[10px] text-slate-500">Cancel</button>
-                <button onclick="verifyAdminPin()" class="flex-1 bg-red-600 py-3 rounded-xl judul-fitur text-[10px]">Auth</button>
-            </div>
+        <div class="mt-6 flex justify-around items-center bg-slate-800/80 p-3 rounded-[2.5rem] border border-white/5 backdrop-blur-md shadow-2xl">
+            <button onclick="goto('home')" id="nav-home" class="nav-link active"><i class="fas fa-th-large"></i></button>
+            <button onclick="goto('whitelist')" id="nav-whitelist" class="nav-link"><i class="fas fa-id-badge"></i></button>
+            <button onclick="goto('server')" id="nav-server" class="nav-link"><i class="fas fa-signal"></i></button>
+            <button onclick="adminCheck()" id="nav-admin" class="nav-link"><i class="fas fa-fingerprint"></i></button>
         </div>
     </div>
 
     <script>
         const _id = (e) => document.getElementById(e);
 
-        // CLOCK
-        setInterval(() => { _id('clock').innerText = new Date().toLocaleTimeString('en-GB'); }, 1000);
+        // INITIAL LOAD SYSTEM
+        window.onload = () => {
+            setTimeout(() => {
+                _id('loadingScreen').style.opacity = '0';
+                setTimeout(() => { 
+                    _id('loadingScreen').style.display = 'none'; 
+                    _id('rulesModal').style.display = 'flex'; 
+                }, 500);
+            }, 2000);
+        };
 
-        // AUTO FORMAT: Nama_Belakang
-        function formatNama(input) {
-            let val = input.value.replace(/\s/g, "_");
-            if (val.includes("_")) {
-                let parts = val.split("_");
-                parts = parts.map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase());
-                val = parts.join("_");
+        function acceptRules() {
+            _id('rulesModal').style.display = 'none';
+            _id('mainWrapper').style.display = 'block';
+            
+            const saved = localStorage.getItem('myWhitelist');
+            if(saved) {
+                showStatus("YOU ARE REGISTERED: " + saved, "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20");
+                disableButton();
             }
-            input.value = val;
-            _id('preview').innerText = val || "Nama_Belakang";
         }
 
+        // PAGE NAVIGATION
         function goto(page) {
             document.querySelectorAll('.page-node').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
             _id('page-' + page).classList.add('active');
             _id('nav-' + page).classList.add('active');
             _id('statusBox').classList.add('hidden');
+            
+            if(page === 'whitelist' && localStorage.getItem('myWhitelist')) {
+                showStatus("REGISTERED AS: " + localStorage.getItem('myWhitelist'), "bg-yellow-500/10 text-yellow-500");
+            }
         }
 
+        // ADMIN LOGIC
         function adminCheck() { _id('adminPinModal').classList.remove('hidden'); _id('adminPinInput').focus(); }
         function closeAdminPin() { _id('adminPinModal').classList.add('hidden'); _id('adminPinInput').value = ''; }
         function verifyAdminPin() {
-            if(_id('adminPinInput').value === "2025") { closeAdminPin(); alert("ACCESS GRANTED"); }
-            else { alert("PIN WRONG"); _id('adminPinInput').value = ''; }
+            if(_id('adminPinInput').value === "2025") { closeAdminPin(); goto('admin'); } 
+            else { alert("ACCESS DENIED"); _id('adminPinInput').value = ''; }
         }
 
+        // BACKEND API LOGIC (COMPLETE)
         async function submitWhitelist() {
-            const name = _id('playerName').value.trim();
-            if (localStorage.getItem('myWhitelist')) return;
-            if(!name.includes("_")) {
-                showStatus("Format Salah!", "bg-red-500/10 text-red-500");
+            const nameInput = _id('playerName');
+            const name = nameInput.value.trim();
+            const btn = _id('btnSubmit');
+            const btnText = _id('btnText');
+
+            if (localStorage.getItem('myWhitelist')) {
+                alert("Only 1 registration per device allowed!");
                 return;
             }
 
-            _id('apiLoader').classList.add('active');
-            
+            if(!name || !name.includes("_")) {
+                showStatus("ERROR: USE FORMAT NAME_SURNAME", "bg-red-500/10 text-red-400 border border-red-500/20");
+                return;
+            }
+
+            btn.disabled = true;
+            btnText.innerText = "PROCESSING...";
+
             try {
+                // Ensure save.php exists in your server
                 const response = await fetch('save.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: 'name=' + encodeURIComponent(name)
                 });
-                
+
                 const result = await response.text();
-                await new Promise(r => setTimeout(r, 2000));
 
                 if(result.trim() === "success") {
                     localStorage.setItem('myWhitelist', name);
-                    showStatus("BERHASIL TERDAFTAR!", "bg-green-500/10 text-green-400");
-                    _id('btnSubmit').disabled = true;
-                    _id('btnSubmit').innerText = "REGISTERED";
+                    showStatus("SUCCESSFULLY REGISTERED!", "bg-green-500/10 text-green-500 border border-green-500/20");
+                    nameInput.value = "";
+                    disableButton();
+                } else {
+                    showStatus("SERVER REJECTED DATA", "bg-red-500/10 text-red-400 border border-red-500/20");
+                    btn.disabled = false;
+                    btnText.innerText = "Daftar Whitelist";
                 }
             } catch (err) {
-                showStatus("SERVER OFFLINE", "bg-red-500/10 text-red-500");
-            } finally {
-                _id('apiLoader').classList.remove('active');
+                showStatus("CONNECTION ERROR", "bg-red-500/10 text-red-400 border border-red-500/20");
+                btn.disabled = false;
+                btnText.innerText = "Daftar Whitelist";
             }
         }
 
-        function showStatus(msg, cls) {
+        function disableButton() {
+            const btn = _id('btnSubmit');
+            const btnText = _id('btnText');
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            btnText.innerText = "REGISTERED";
+        }
+
+        function showStatus(msg, classes) {
             const s = _id('statusBox');
             s.innerText = msg;
-            s.className = "mt-6 p-4 rounded-xl judul-fitur text-[10px] text-center " + cls;
+            s.className = "mt-auto p-4 rounded-2xl text-[10px] text-center font-bold " + classes;
             s.classList.remove('hidden');
-        }
-
-        window.onload = () => {
-            const saved = localStorage.getItem('myWhitelist');
-            if(saved) {
-                _id('btnSubmit').disabled = true;
-                _id('btnSubmit').innerText = "REGISTERED";
-            }
         }
     </script>
 </body>
