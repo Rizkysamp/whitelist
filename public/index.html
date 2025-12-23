@@ -3,136 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Whitelist | Millanium Roleplay</title>
+    <title>Millanium RP | Hub Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* LOADING MODERN BAR */
-        .load-bar {
-            width: 200px;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            position: relative;
-            overflow: hidden;
-        }
-        .load-bar::after {
-            content: '';
-            position: absolute;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, #06b6d4, transparent);
-            animation: progress 2s infinite ease-in-out;
-        }
-        @keyframes progress {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-        .pulse-text { animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        body { background-color: #0b1120; color: white; font-family: sans-serif; }
+        /* LOADING */
+        .load-bar { width: 200px; height: 2px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; position: relative; overflow: hidden; }
+        .load-bar::after { content: ''; position: absolute; left: -100%; width: 100%; height: 100%; background: #06b6d4; animation: progress 2s infinite ease-in-out; }
+        @keyframes progress { 0% { left: -100%; } 100% { left: 100%; } }
 
-        #rulesModal, #mainPanel { display: none; }
+        /* PAGE SYSTEM */
+        #rulesModal, #mainWrapper { display: none; }
+        .page-node { display: none; }
+        .page-node.active { display: block; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        /* NAV STYLING */
+        .nav-link { @apply flex-1 flex flex-col items-center gap-1 text-[8px] font-black uppercase tracking-[0.2em] text-slate-600 transition-all duration-300; border:none; background:none; cursor:pointer;}
+        .nav-link i { @apply text-lg; }
+        .nav-link.active { @apply text-cyan-500 scale-110; }
+        
+        .glass-card { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
-<body class="bg-slate-900 text-white font-sans flex items-center justify-center min-h-screen p-4">
+<body class="flex items-center justify-center min-h-screen p-4">
 
-    <div id="loadingScreen" class="fixed inset-0 bg-slate-950 z-50 flex flex-col items-center justify-center transition-opacity duration-500">
-        <div class="relative mb-6">
-            <div class="absolute -inset-4 bg-cyan-500/10 blur-xl rounded-full"></div>
-            <i class="fas fa-microchip text-4xl text-cyan-500 relative animate-pulse"></i>
-        </div>
+    <div id="loadingScreen" class="fixed inset-0 bg-[#0b1120] z-50 flex flex-col items-center justify-center transition-opacity duration-500">
+        <i class="fas fa-satellite-dish text-4xl text-cyan-500 mb-6 animate-bounce"></i>
         <div class="load-bar mb-4"></div>
-        <div class="text-center">
-            <p id="loadStatus" class="text-cyan-500 font-bold tracking-[0.3em] text-[10px] uppercase pulse-text">Initializing Protocol...</p>
-            <p class="text-slate-600 text-[8px] mt-2 font-mono uppercase tracking-widest">Millanium Security Node v2.5</p>
+        <p class="text-cyan-500 font-bold tracking-[0.4em] text-[9px] uppercase">Establishing Link...</p>
+    </div>
+
+    <div id="rulesModal" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-[2.5rem] p-10 shadow-2xl text-center">
+            <h2 class="text-xl font-black uppercase mb-6 tracking-widest border-b border-slate-700 pb-4">Protocol Entry</h2>
+            <p class="text-slate-400 text-sm mb-10 leading-relaxed italic">"Selamat datang di Millanium RP. Dengan masuk, Anda setuju untuk menjaga kualitas roleplay dan mematuhi hukum kota."</p>
+            <button onclick="acceptRules()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-4 rounded-2xl font-black uppercase text-xs tracking-widest transition-all text-white">Agree & Connect</button>
         </div>
     </div>
 
-    <div id="rulesModal" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-[2rem] p-8 shadow-2xl">
-            <div class="text-center mb-6">
-                <i class="fas fa-gavel text-3xl text-yellow-500 mb-2"></i>
-                <h2 class="text-xl font-bold uppercase tracking-tight">Aturan Kota</h2>
+    <div id="adminPinModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl hidden">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-[2.5rem] p-10 shadow-2xl text-center">
+            <div class="bg-red-500/10 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-red-500/20">
+                <i class="fas fa-key text-2xl text-red-500"></i>
             </div>
-            <div class="space-y-4 text-sm text-slate-300 overflow-y-auto max-h-60 pr-2">
-                <div class="flex gap-3 text-sm">
-                    <i class="fas fa-check text-cyan-500 mt-1"></i>
-                    <p><b>Respect:</b> Hargai seluruh warga dan staff tanpa terkecuali.</p>
-                </div>
-                <div class="flex gap-3 text-sm">
-                    <i class="fas fa-check text-cyan-500 mt-1"></i>
-                    <p><b>No Cheating:</b> Dilarang menggunakan program pihak ketiga.</p>
-                </div>
-                <div class="flex gap-3 text-sm">
-                    <i class="fas fa-check text-cyan-500 mt-1"></i>
-                    <p><b>Roleplay:</b> Utamakan interaksi peran yang realistis dan logis.</p>
-                </div>
-                <p class="text-[10px] italic text-slate-500 mt-4 border-t border-slate-700 pt-4 text-center italic">
-                    Dengan melanjutkan, Anda setuju menaati peraturan Millanium RP.
-                </p>
+            <h2 class="text-xl font-black uppercase mb-2 tracking-widest">Admin Access</h2>
+            <p class="text-slate-500 text-[10px] font-bold uppercase mb-8 tracking-widest">Input security credentials</p>
+            <input type="password" id="adminPinInput" maxlength="4" class="w-full bg-slate-900 border border-slate-700 p-5 rounded-2xl text-center text-2xl font-black tracking-[1em] text-white outline-none focus:border-red-500 transition-all mb-6" placeholder="****">
+            <div class="flex gap-3">
+                <button onclick="closeAdminPin()" class="flex-1 bg-slate-700 hover:bg-slate-600 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all text-white">Cancel</button>
+                <button onclick="verifyAdminPin()" class="flex-1 bg-red-600 hover:bg-red-500 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all shadow-lg shadow-red-900/40 text-white">Verify</button>
             </div>
-            <button onclick="acceptRules()" class="w-full mt-8 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-cyan-900/40 uppercase tracking-widest text-xs">
-                SAYA PAHAM & SETUJU
-            </button>
         </div>
     </div>
 
-    <div id="mainPanel" class="max-w-md w-full p-8 bg-slate-800 rounded-[2.5rem] shadow-2xl border border-slate-700 relative overflow-hidden">
-        <div class="text-center mb-8">
-            <div class="bg-cyan-500 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-cyan-500/30 rotate-3">
-                <i class="fas fa-user-check text-2xl text-white"></i>
+    <div id="mainWrapper" class="max-w-md w-full">
+        <div id="contentPanel" class="bg-slate-800 rounded-[2.5rem] p-8 shadow-2xl border border-slate-700 min-h-[500px] flex flex-col transition-all duration-300">
+            
+            <div id="page-home" class="page-node active">
+                <div class="flex justify-between items-center mb-10">
+                    <div>
+                        <h1 class="text-xl font-black uppercase tracking-tight">Welcome,</h1>
+                        <p class="text-cyan-500 text-[10px] font-bold uppercase tracking-widest">Citizen of Millanium</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-slate-700 border border-cyan-500/50 flex items-center justify-center"><i class="fas fa-user text-cyan-500"></i></div>
+                </div>
+                <div class="space-y-4">
+                    <div class="glass-card p-5 rounded-3xl">
+                        <p class="text-[9px] font-bold text-cyan-500 uppercase mb-2"><i class="fas fa-bullhorn mr-1"></i> Announcement</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">Pendaftaran warga batch #2 telah dibuka. Pastikan Anda sudah join Discord kami.</p>
+                    </div>
+                </div>
             </div>
-            <h1 class="text-2xl font-black tracking-tighter uppercase italic">Whitelist Panel</h1>
-            <p class="text-slate-400 text-[10px] uppercase tracking-[0.3em] font-bold mt-1">Millanium Management</p>
-            <p class="text-slate-500 text-[9px] mt-3 flex items-center justify-center bg-slate-900/50 py-1 px-3 rounded-full w-fit mx-auto border border-white/5">
-                <i class="fas fa-server mr-2 text-cyan-500 text-[8px]"></i> 159.223.83.82:5163
-            </p>
+
+            <div id="page-whitelist" class="page-node">
+                <div class="text-center mb-8">
+                    <div class="bg-cyan-500 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-cyan-500/30">
+                        <i class="fas fa-fingerprint text-2xl text-white"></i>
+                    </div>
+                    <h1 class="text-2xl font-black tracking-[0.1em] uppercase">Whitelist</h1>
+                </div>
+                <div class="space-y-4">
+                    <input type="text" id="playerName" class="w-full px-5 py-4 bg-slate-900 border border-slate-700 rounded-2xl focus:ring-2 focus:ring-cyan-500 outline-none text-sm font-semibold text-white" placeholder="Budi_Santoso">
+                    <button onclick="submitWhitelist()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-4 rounded-2xl font-black uppercase text-xs tracking-widest text-white transition-all">Register Citizen</button>
+                </div>
+            </div>
+
+            <div id="page-server" class="page-node">
+                <div class="text-center mb-8">
+                    <div class="bg-emerald-500 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
+                        <i class="fas fa-network-wired text-2xl text-white"></i>
+                    </div>
+                    <h1 class="text-2xl font-black tracking-[0.1em] uppercase">Network</h1>
+                </div>
+                <div class="space-y-3">
+                    <div class="bg-slate-900/50 p-5 rounded-3xl border border-white/5">
+                        <div class="flex justify-between items-end mb-3">
+                            <p class="text-[8px] font-black text-slate-500 uppercase">Citizens</p>
+                            <p class="text-xl font-black">24<span class="text-xs text-slate-500">/100</span></p>
+                        </div>
+                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div class="bg-gradient-to-r from-cyan-500 to-emerald-500 h-full w-[24%] shadow-[0_0_15px_rgba(6,182,212,0.4)]"></div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/50 p-4 rounded-2xl border border-white/5 flex justify-between items-center text-[10px] font-bold">
+                        <span class="text-slate-500">IP ADDRESS</span>
+                        <span class="text-cyan-500">159.223.83.82:5163</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-admin" class="page-node text-center">
+                <i class="fas fa-lock text-4xl text-red-500 mb-4"></i>
+                <h1 class="text-xl font-black uppercase mb-8">Admin Control</h1>
+                <div class="space-y-3">
+                    <button class="w-full bg-slate-900 border border-slate-700 p-4 rounded-2xl text-[9px] font-black uppercase tracking-widest text-slate-400">View Logs</button>
+                </div>
+            </div>
+
+            <div id="statusBox" class="mt-auto hidden p-4 rounded-2xl text-[10px] text-center font-bold"></div>
         </div>
 
-        <div class="space-y-4">
-            <div>
-                <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-2 ml-1">Citizen Identity Name</label>
-                <input type="text" id="playerName" 
-                    class="w-full px-5 py-4 bg-slate-900 border border-slate-700 rounded-2xl focus:ring-2 focus:ring-cyan-500/50 outline-none transition-all placeholder-slate-700 text-sm font-semibold"
-                    placeholder="Contoh: Budi_Santoso">
-            </div>
-
-            <button onclick="submitWhitelist()" id="btnSubmit"
-                class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-black py-4 rounded-2xl transition-all transform active:scale-95 shadow-lg shadow-cyan-900/40 flex items-center justify-center text-xs uppercase tracking-[0.2em]">
-                <span id="btnText">Daftarkan Whitelist</span>
-                <i id="btnIcon" class="fas fa-paper-plane ml-3 text-[10px]"></i>
-            </button>
+        <div class="mt-6 flex justify-between items-center bg-slate-800/50 p-4 rounded-[2.5rem] border border-white/5 backdrop-blur-lg">
+            <button onclick="goto('home')" id="nav-home" class="nav-link active"><i class="fas fa-home"></i><span>Home</span></button>
+            <button onclick="goto('whitelist')" id="nav-whitelist" class="nav-link"><i class="fas fa-id-badge"></i><span>Register</span></button>
+            <button onclick="goto('server')" id="nav-server" class="nav-link"><i class="fas fa-chart-bar"></i><span>Status</span></button>
+            <button onclick="adminCheck()" id="nav-admin" class="nav-link"><i class="fas fa-shield-alt"></i><span>Admin</span></button>
         </div>
-
-        <div id="statusBox" class="mt-4 hidden p-4 rounded-2xl text-[11px] text-center font-bold border border-white/5 animate-pulse italic"></div>
-
-        <div class="mt-4 p-5 bg-slate-900/50 rounded-[1.5rem] border border-slate-700/50 space-y-3">
-            <div class="flex items-start gap-3 text-[10px] text-slate-400">
-                <i class="fas fa-info-circle text-cyan-500 mt-0.5 text-xs"></i>
-                <p class="leading-relaxed text-left">Gunakan format <b class="text-slate-200 uppercase">Nama_Belakang</b></p>
-            </div>
-            <div class="flex items-start gap-3 text-[10px] text-slate-400">
-                <i class="fas fa-shield-alt text-cyan-500 mt-0.5 text-xs"></i>
-                <p class="leading-relaxed text-left">Gunakan Akun Dengan Bijak!!</p>
-            </div>
-            <div class="flex items-start gap-3 text-[10px] text-slate-400">
-                <i class="fas fa-door-open text-cyan-500 mt-0.5 text-xs"></i>
-                <p class="leading-relaxed text-left">Berhasil? Bisa langsung login ke server.</p>
-            </div>
-        </div>
-
-        <p class="text-center text-slate-700 text-[9px] mt-8 uppercase tracking-[0.4em] font-black">Millanium RP &copy; 2025</p>
     </div>
 
-<script>
-/**
-         * PROTEKSI LEVEL: HARD
-         * - Anti-Beautify
-         * - Anti-Debugger
-         * - Key Control
-*/
-document.write(unescape('%0A%20%20%20%20%3Cscript%3E%0A%20%20%20%20%20%20%20%20//%20Logika%20Loading%20Screen%0A%20%20%20%20%20%20%20%20function%20init%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20setTimeout%28%28%29%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27loadingScreen%27%29.style.display%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27rulesModal%27%29.style.display%20%3D%20%27flex%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%202500%29%3B%20%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20//%20Jalankan%20init%20saat%20halaman%20dimuat%0A%20%20%20%20%20%20%20%20if%20%28document.readyState%20%3D%3D%3D%20%27complete%27%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20init%28%29%3B%0A%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20window.addEventListener%28%27load%27%2C%20init%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20//%20Fungsi%20klik%20%22SAYA%20PAHAM%22%0A%20%20%20%20%20%20%20%20function%20acceptRules%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27rulesModal%27%29.style.display%20%3D%20%27none%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20document.getElementById%28%27mainPanel%27%29.style.display%20%3D%20%27block%27%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20//%20Cek%20status%20pendaftaran%20sebelumnya%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20registeredName%20%3D%20localStorage.getItem%28%27myWhitelist%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20%28registeredName%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showStatus%28%22Anda%20sudah%20terdaftar%3A%20%22%20+%20registeredName%2C%20%22bg-yellow-500/20%20text-yellow-400%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20disableButton%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20async%20function%20submitWhitelist%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20nameInput%20%3D%20document.getElementById%28%27playerName%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20name%20%3D%20nameInput.value.trim%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20btn%20%3D%20document.getElementById%28%27btnSubmit%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20btnText%20%3D%20document.getElementById%28%27btnText%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20statusBox%20%3D%20document.getElementById%28%27statusBox%27%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20%28localStorage.getItem%28%27myWhitelist%27%29%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20alert%28%22Hanya%20boleh%20mendaftar%201%20kali%20per%20perangkat%21%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20return%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20if%28%21name%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showStatus%28%22Masukkan%20nama%20player%21%22%2C%20%22bg-red-500/20%20text-red-400%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20return%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20btn.disabled%20%3D%20true%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20btnText.innerText%20%3D%20%22Processing...%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20statusBox.classList.add%28%27hidden%27%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20try%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20response%20%3D%20await%20fetch%28%27/api/whitelist%27%2C%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20method%3A%20%27POST%27%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20headers%3A%20%7B%20%27Content-Type%27%3A%20%27application/json%27%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20body%3A%20JSON.stringify%28%7B%20name%3A%20name%20%7D%29%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20const%20result%20%3D%20await%20response.json%28%29%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%28result.success%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20localStorage.setItem%28%27myWhitelist%27%2C%20name%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showStatus%28%22Berhasil%20mendaftarkan%20%22%20+%20name%2C%20%22bg-green-500/20%20text-green-400%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20nameInput.value%20%3D%20%22%22%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20disableButton%28%29%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showStatus%28%22Gagal%3A%20%22%20+%20%28result.error%20%7C%7C%20%22Terjadi%20kesalahan%22%29%2C%20%22bg-red-500/20%20text-red-400%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20btn.disabled%20%3D%20false%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20btnText.innerText%20%3D%20%22Daftarkan%20Whitelist%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%20catch%20%28err%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showStatus%28%22Kesalahan%20koneksi%20ke%20server.%22%2C%20%22bg-red-500/20%20text-red-400%22%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20btn.disabled%20%3D%20false%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20btnText.innerText%20%3D%20%22Daftarkan%20Whitelist%22%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20disableButton%28%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20btn%20%3D%20document.getElementById%28%27btnSubmit%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20btnText%20%3D%20document.getElementById%28%27btnText%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20btn.disabled%20%3D%20true%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20btn.classList.add%28%27opacity-50%27%2C%20%27cursor-not-allowed%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20btnText.innerText%20%3D%20%22Sudah%20Terdaftar%22%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20function%20showStatus%28msg%2C%20classes%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20statusBox%20%3D%20document.getElementById%28%27statusBox%27%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20statusBox.innerText%20%3D%20msg%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20statusBox.className%20%3D%20%22mt-4%20p-3%20rounded-lg%20text-%5B11px%5D%20text-center%20%22%20+%20classes%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20statusBox.classList.remove%28%27hidden%27%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%3C/script%3E%0A'));
-</script>
+    <script>
+        const _id = (e) => document.getElementById(e);
+
+        window.onload = () => {
+            setTimeout(() => {
+                _id('loadingScreen').style.opacity = '0';
+                setTimeout(() => { _id('loadingScreen').style.display = 'none'; _id('rulesModal').style.display = 'flex'; }, 500);
+            }, 2000);
+        };
+
+        function acceptRules() { _id('rulesModal').style.display = 'none'; _id('mainWrapper').style.display = 'block'; }
+
+        function goto(page) {
+            const content = _id('contentPanel');
+            content.style.opacity = '0';
+            setTimeout(() => {
+                document.querySelectorAll('.page-node').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+                _id('page-' + page).classList.add('active');
+                _id('nav-' + page).classList.add('active');
+                _id('statusBox').classList.add('hidden');
+                content.style.opacity = '1';
+            }, 300);
+        }
+
+        function adminCheck() { _id('adminPinModal').classList.remove('hidden'); _id('adminPinInput').focus(); }
+        function closeAdminPin() { _id('adminPinModal').classList.add('hidden'); _id('adminPinInput').value = ''; }
+        function verifyAdminPin() {
+            if(_id('adminPinInput').value === "2025") { closeAdminPin(); goto('admin'); } 
+            else { alert("WRONG PIN"); _id('adminPinInput').value = ''; }
+        }
+
+        function submitWhitelist() {
+            const name = _id('playerName').value;
+            if(!name.includes("_")) { showStatus("FORMAT SALAH!", "bg-red-500/10 text-red-400 border border-red-500/20"); return; }
+            showStatus("REQUEST SENT: " + name, "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20");
+        }
+
+        function showStatus(m, c) {
+            const s = _id('statusBox');
+            s.innerText = m;
+            s.className = "mt-auto p-4 rounded-2xl text-[10px] text-center font-bold " + c;
+            s.classList.remove('hidden');
+        }
+    </script>
 </body>
 </html>
