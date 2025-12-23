@@ -7,23 +7,46 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .loader {
-            border-top-color: #06b6d4;
-            animation: spinner 1.5s linear infinite;
+        /* LOADING MODERN */
+        .load-bar {
+            width: 200px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
         }
-        @keyframes spinner {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .load-bar::after {
+            content: '';
+            position: absolute;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, #06b6d4, transparent);
+            animation: progress 2s infinite ease-in-out;
         }
-        /* Memastikan elemen tersembunyi dengan benar saat awal */
+        @keyframes progress {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        .pulse-text { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
         #rulesModal, #mainPanel { display: none; }
     </style>
 </head>
 <body class="bg-slate-900 text-white font-sans flex items-center justify-center min-h-screen p-4">
 
-    <div id="loadingScreen" class="fixed inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center">
-        <div class="loader ease-linear rounded-full border-4 border-t-4 border-slate-700 h-12 w-12 mb-4"></div>
-        <p class="text-cyan-500 font-bold tracking-widest text-[10px] uppercase animate-pulse">Menghubungkan ke Millanium...</p>
+    <div id="loadingScreen" class="fixed inset-0 bg-slate-950 z-50 flex flex-col items-center justify-center">
+        <div class="relative mb-6">
+            <div class="absolute -inset-4 bg-cyan-500/10 blur-xl rounded-full"></div>
+            <i class="fas fa-microchip text-4xl text-cyan-500 relative animate-pulse"></i>
+        </div>
+        <div class="load-bar mb-4"></div>
+        <div class="text-center">
+            <p id="loadStatus" class="text-cyan-500 font-bold tracking-[0.3em] text-[10px] uppercase pulse-text">Initializing Protocol...</p>
+            <p class="text-slate-600 text-[8px] mt-2 font-mono uppercase tracking-widest">Millanium Security Node v2.5</p>
+        </div>
     </div>
 
     <div id="rulesModal" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
@@ -50,7 +73,7 @@
             <div class="bg-cyan-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-cyan-500/50">
                 <i class="fas fa-user-check text-2xl text-white"></i>
             </div>
-            <h1 class="text-2xl font-bold tracking-tight">Whitelist Panel</h1>
+            <h1 class="text-2xl font-bold tracking-tight uppercase">Whitelist Panel</h1>
             <p class="text-slate-400 text-sm mt-1">Millanium Roleplay Management</p>
             <p class="text-slate-400 text-xs mt-1 flex items-center justify-center">
                 <i class="fas fa-server mr-2 text-cyan-500 text-[10px]"></i> IP: 159.223.83.82:5163
@@ -66,7 +89,7 @@
             </div>
 
             <button onclick="submitWhitelist()" id="btnSubmit"
-                class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition-all transform active:scale-95 shadow-lg shadow-cyan-600/30 flex items-center justify-center text-sm">
+                class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition-all transform active:scale-95 shadow-lg shadow-cyan-600/30 flex items-center justify-center text-sm uppercase tracking-widest">
                 <span id="btnText">Daftarkan Whitelist</span>
                 <i id="btnIcon" class="fas fa-paper-plane ml-2 text-xs"></i>
             </button>
@@ -74,13 +97,13 @@
 
         <div id="statusBox" class="mt-4 hidden p-3 rounded-lg text-[11px] text-center"></div>
 
-        <div class="mt-6 p-4 bg-slate-900/50 rounded-lg border border-slate-700/50 text-[11px] text-slate-400 space-y-1">
-            <li><i class="fas fa-check-circle text-cyan-500 mr-1"></i> Gunakan format <b>Nama_Belakang</b></li>
-            <li><i class="fas fa-shield-alt text-cyan-500 mr-1"></i> Gunakan Akun Dengan Bijak!!</li>
-            <li><i class="fas fa-door-open text-cyan-500 mr-1"></i> Berhasil? Bisa langsung login.</li>
+        <div class="mt-6 p-4 bg-slate-900/50 rounded-xl border border-slate-700/50 text-[10px] text-slate-400 text-center space-y-1">
+            <p><i class="fas fa-info-circle text-cyan-500 mr-1"></i> Gunakan format <b class="text-slate-200">Nama_Belakang</b></p>
+            <p><i class="fas fa-shield-alt text-cyan-500 mr-1"></i> Gunakan akun dengan bijak</p>
+            <p><i class="fas fa-check-circle text-cyan-500 mr-1"></i> Jika berhasil, silakan langsung login</p>
         </div>
 
-        <p class="text-center text-slate-600 text-[9px] mt-6 uppercase tracking-widest font-bold">Millanium RP &copy; 2025</p>
+        <p class="text-center text-slate-600 text-[9px] mt-6 uppercase tracking-[0.3em] font-bold">Millanium RP &copy; 2025</p>
     </div>
 
 <script>
