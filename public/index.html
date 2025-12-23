@@ -187,49 +187,52 @@
             else { alert("ACCESS DENIED"); _id('adminPinInput').value = ''; }
         }
 
-       async function submitWhitelist() {
-    const name = _id('playerName').value.trim();
-    if (localStorage.getItem('myWhitelist')) return;
-    
-    // Validasi format Nama_Belakang
-    if(!name.includes("_") || name.length < 5) {
-        showStatus("IDENT_FORMAT_ERROR", "bg-red-500/10 text-red-500 border-red-500/20");
-        return;
-    }
+        async function submitWhitelist() {
+            const nameInput = document.getElementById('playerName');
+            const name = nameInput.value.trim();
+            const btn = document.getElementById('btnSubmit');
+            const btnText = document.getElementById('btnText');
+            const statusBox = document.getElementById('statusBox');
 
-    // Aktifkan Loading API
-    _id('apiLoader').classList.add('active');
-    
-    try {
-        // Kirim data sebagai JSON agar terbaca oleh req.body di handler lu
-        const response = await fetch('/api/save', { // Pastikan path ini sesuai lokasi file handler lu
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify({ name: name })
-        });
-        
-        // Ambil respon JSON dari API Node.js lu
-        const result = await response.json();
+            if (localStorage.getItem('myWhitelist')) {
+                alert("Hanya boleh mendaftar 1 kali per perangkat!");
+                return;
+            }
 
-        if(result.success) {
-            localStorage.setItem('myWhitelist', name);
-            showStatus("IDENTITY_SYNCED_SUCCESS", "bg-green-500/10 text-green-400 border-green-500/20");
-            _id('btnSubmit').disabled = true;
-            _id('btnSubmit').innerText = "DATA_LOCKED";
-        } else {
-            // Jika success: false dari API
-            showStatus("REJECTED: " + (result.error || "Internal Error"), "bg-red-500/10 text-red-500 border-red-500/20");
+            if(!name) {
+                showStatus("Masukkan nama player!", "bg-red-500/20 text-red-400");
+                return;
+            }
+
+            btn.disabled = true;
+            btnText.innerText = "Processing...";
+            statusBox.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/whitelist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name })
+                });
+
+                const result = await response.json();
+
+                if(result.success) {
+                    localStorage.setItem('myWhitelist', name);
+                    showStatus("Berhasil mendaftarkan " + name, "bg-green-500/20 text-green-400");
+                    nameInput.value = ""; 
+                    disableButton(); 
+                } else {
+                    showStatus("Gagal: " + (result.error || "Terjadi kesalahan"), "bg-red-500/20 text-red-400");
+                    btn.disabled = false;
+                    btnText.innerText = "Daftarkan Whitelist";
+                }
+            } catch (err) {
+                showStatus("Kesalahan koneksi ke server.", "bg-red-500/20 text-red-400");
+                btn.disabled = false;
+                btnText.innerText = "Daftarkan Whitelist";
+            }
         }
-    } catch (err) {
-        // Jika koneksi putus atau API gak ketemu
-        showStatus("CONNECTION_FAILURE", "bg-red-500/10 text-red-500 border-red-500/20");
-    } finally {
-        // Matikan Loading API
-        _id('apiLoader').classList.remove('active');
-    }
-}
 
         function disableButton() {
             const btn = _id('btnSubmit');
