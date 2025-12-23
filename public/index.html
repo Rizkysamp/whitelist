@@ -187,52 +187,49 @@
             else { alert("ACCESS DENIED"); _id('adminPinInput').value = ''; }
         }
 
-        // BACKEND API LOGIC (COMPLETE)
-        async function submitWhitelist() {
-            const nameInput = _id('playerName');
-            const name = nameInput.value.trim();
-            const btn = _id('btnSubmit');
-            const btnText = _id('btnText');
+       async function submitWhitelist() {
+    const name = _id('playerName').value.trim();
+    if (localStorage.getItem('myWhitelist')) return;
+    
+    // Validasi format Nama_Belakang
+    if(!name.includes("_") || name.length < 5) {
+        showStatus("IDENT_FORMAT_ERROR", "bg-red-500/10 text-red-500 border-red-500/20");
+        return;
+    }
 
-            if (localStorage.getItem('myWhitelist')) {
-                alert("Only 1 registration per device allowed!");
-                return;
-            }
+    // Aktifkan Loading API
+    _id('apiLoader').classList.add('active');
+    
+    try {
+        // Kirim data sebagai JSON agar terbaca oleh req.body di handler lu
+        const response = await fetch('/api/save', { // Pastikan path ini sesuai lokasi file handler lu
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json' 
+            },
+            body: JSON.stringify({ name: name })
+        });
+        
+        // Ambil respon JSON dari API Node.js lu
+        const result = await response.json();
 
-            if(!name || !name.includes("_")) {
-                showStatus("ERROR: USE FORMAT NAME_SURNAME", "bg-red-500/10 text-red-400 border border-red-500/20");
-                return;
-            }
-
-            btn.disabled = true;
-            btnText.innerText = "PROCESSING...";
-
-            try {
-                // Ensure save.php exists in your server
-                const response = await fetch('save.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: 'name=' + encodeURIComponent(name)
-                });
-
-                const result = await response.text();
-
-                if(result.trim() === "success") {
-                    localStorage.setItem('myWhitelist', name);
-                    showStatus("SUCCESSFULLY REGISTERED!", "bg-green-500/10 text-green-500 border border-green-500/20");
-                    nameInput.value = "";
-                    disableButton();
-                } else {
-                    showStatus("SERVER REJECTED DATA", "bg-red-500/10 text-red-400 border border-red-500/20");
-                    btn.disabled = false;
-                    btnText.innerText = "Daftar Whitelist";
-                }
-            } catch (err) {
-                showStatus("CONNECTION ERROR", "bg-red-500/10 text-red-400 border border-red-500/20");
-                btn.disabled = false;
-                btnText.innerText = "Daftar Whitelist";
-            }
+        if(result.success) {
+            localStorage.setItem('myWhitelist', name);
+            showStatus("IDENTITY_SYNCED_SUCCESS", "bg-green-500/10 text-green-400 border-green-500/20");
+            _id('btnSubmit').disabled = true;
+            _id('btnSubmit').innerText = "DATA_LOCKED";
+        } else {
+            // Jika success: false dari API
+            showStatus("REJECTED: " + (result.error || "Internal Error"), "bg-red-500/10 text-red-500 border-red-500/20");
         }
+    } catch (err) {
+        // Jika koneksi putus atau API gak ketemu
+        showStatus("CONNECTION_FAILURE", "bg-red-500/10 text-red-500 border-red-500/20");
+    } finally {
+        // Matikan Loading API
+        _id('apiLoader').classList.remove('active');
+    }
+}
 
         function disableButton() {
             const btn = _id('btnSubmit');
