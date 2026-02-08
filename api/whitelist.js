@@ -4,9 +4,9 @@ export default async function handler(req, res) {
     const { name } = req.body;
     if (!name) return res.status(400).json({ success: false, error: 'Nama tidak boleh kosong' });
 
-    const panelUrl = "https://cx.galaxyhost.biz.id";
-    const serverId = "c3a6f2ed";
-    const apiKey = "ptlc_5J2dxXOlwNxmiQIofjqSCuDNfyctfESju4YyxwhGcoO"; // PASTIKAN COPY ULANG DARI PANEL
+    const panelUrl = "https://mizonetwork.galaxyhost.biz.id";
+    const serverId = "ff861198";
+    const apiKey = "ptlc_DDPzaLZAwKYGGhtD6ZNJeSfFA9u026h4ExUYYY08jyL"; // PASTIKAN COPY ULANG DARI PANEL
 
     // Bersihkan URL panel (hapus / di akhir jika ada)
     const cleanUrl = panelUrl.replace(/\/$/, "");
