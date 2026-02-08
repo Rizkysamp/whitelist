@@ -1,9 +1,8 @@
 export default async function handler(req, res) {
     // 1. Setting Panel Lu
-    const panelUrl = "https://cx.galaxyhost.biz.id";
-    const serverId = "c3a6f2ed";
-    const apiKey = "ptlc_5J2dxXOlwNxmiQIofjqSCuDNfyctfESju4YyxwhGcoO"; 
-
+    const panelUrl = "https://mizonetwork.galaxyhost.biz.id";
+    const serverId = "ff861198";
+    const apiKey = "ptlc_2LlVbQGKnQNGWcBpJH4je8MCdp8JOuQNNphQgBRFKpi"; 
     // Header untuk bypass CORS dan memberi tahu kalau ini adalah JSON
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
